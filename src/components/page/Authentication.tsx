@@ -18,6 +18,7 @@ export default function Authentication() {
                 </div>
                 {/*Buttons*/}
                 <div className={"w-full flex flex-col gap-y-3"}>
+                    {/*Sign in*/}
                     <button
                         type={"submit"}
                         className={"flex w-full justify-center gap-x-3 items-center border px-6 py-1.5 rounded " +
@@ -26,11 +27,15 @@ export default function Authentication() {
                     >
                         <span className={"text-text"}>Sign in</span>
                     </button>
+
+                    {/*Border*/}
                     <div className={"w-full flex items-center justify-between gap-x-3"}>
                         <div className={"w-full border-b-2"} />
                         <span className={"text-secondary font-bold"}>or</span>
                         <div className={"w-full border-b"} />
                     </div>
+
+                    {/*Sign up*/}
                     <button
                         className={"flex w-full justify-center gap-x-3 items-center border px-6 py-1.5 rounded " +
                             "transition ease-in-out bg-gradient-to-r from-text to-secondary hover:bg-gradient-to-br " +

@@ -21,7 +21,7 @@ export default function FloatingLabelInput(props: FloatingLabelInputParams) {
             <label htmlFor={props.id}
                    className={"absolute left-0 -top-3 text-sm transition-all text-secondary " +
                        "peer-placeholder-shown:text-base peer-placeholder-shown:text-secondary " +
-                       "peer-placeholder-shown:top-2 peer-focus:-top-3 peer-focus:text-secondary peer-focus:text-sm"}
+                       "peer-placeholder-shown:top-3 peer-focus:-top-3 peer-focus:text-secondary peer-focus:text-sm"}
             >
                 {props.label}
             </label>

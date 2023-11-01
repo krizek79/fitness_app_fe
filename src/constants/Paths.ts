@@ -1,4 +1,6 @@
 export const Paths = {
     HOME: "/",
-    AUTH: "/auth"
+    AUTH: "/auth",
+    WORKOUT: "/workout",
+    PROFILE: "/profile"
 }
