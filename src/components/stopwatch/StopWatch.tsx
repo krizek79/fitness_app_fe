@@ -1,7 +1,7 @@
 import useStopWatch from "./useStopWatch.ts";
-import {PlayIcon} from "../icons/PlayIcon.tsx";
-import {PauseIcon} from "../icons/PauseIcon.tsx";
-import {StopIcon} from "../icons/StopIcon.tsx";
+import {PlayIcon} from "../icon/PlayIcon.tsx";
+import {PauseIcon} from "../icon/PauseIcon.tsx";
+import {StopIcon} from "../icon/StopIcon.tsx";
 
 export default function StopWatch() {
 
