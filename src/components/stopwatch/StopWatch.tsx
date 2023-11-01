@@ -8,8 +8,8 @@ export default function StopWatch() {
     const { isRunning, time, handleStartStop, handleReset, formatTime } = useStopWatch()
 
     return (
-        <div className={"flex w-full justify-center gap-x-12 items-center"}>
-            <div className={"flex gap-x-6"}>
+        <div className={"flex w-full justify-center gap-x-12"}>
+            <div className={"flex gap-x-6 items-center"}>
                 <button
                     onClick={handleStartStop}
                     className={"p-2 border-2 border-primary rounded-full hover:bg-accent transition duration-150"}
@@ -19,7 +19,7 @@ export default function StopWatch() {
                         : <PauseIcon className={"text-text h-5"}/>
                     }
                 </button>
-                <span className={"text-text text-2xl font-normal text-left"}>
+                <span className={"text-text text-2xl font-normal"}>
                     {formatTime(time)}
                 </span>
                 <button
