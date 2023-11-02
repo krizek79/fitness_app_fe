@@ -1,4 +1,5 @@
 import FloatingLabelInput from "../util/FloatingLabelInput.tsx"
+import SignUp from "./SignUp.tsx";
 
 export default function Authentication() {
 
@@ -7,14 +8,24 @@ export default function Authentication() {
     }
 
     return (
-        <div className={"flex w-full justify-center px-1.5 md:px-6"}>
+        <div className={"flex w-full justify-center px-0 md:px-6"}>
             <form onSubmit={handleSubmit}
-                  className={"w-full md:w-1/2 flex flex-col gap-y-6 justify-center border-2 p-6 shadow-sm"}
+                  className={"w-full md:w-1/2 flex flex-col gap-y-12 justify-center border-2 px-6 py-12 shadow-sm"}
             >
                 {/*Fields*/}
                 <div className={"w-full flex flex-col gap-y-6"}>
-                    <FloatingLabelInput id={"email"} name={"email"} type={"email"} label={"Email address"} />
-                    <FloatingLabelInput id={"password"} name={"password"} type={"password"} label={"Password"} />
+                    <FloatingLabelInput
+                        id={"signInEmail"}
+                        name={"signInEmail"}
+                        type={"email"}
+                        label={"Email address"}
+                    />
+                    <FloatingLabelInput
+                        id={"signInPassword"}
+                        name={"signInPassword"}
+                        type={"password"}
+                        label={"Password"}
+                    />
                 </div>
                 {/*Buttons*/}
                 <div className={"w-full flex flex-col gap-y-3"}>
@@ -35,14 +46,7 @@ export default function Authentication() {
                         <div className={"w-full border-b"} />
                     </div>
 
-                    {/*Sign up*/}
-                    <button
-                        className={"flex w-full justify-center gap-x-3 items-center border px-6 py-1.5 rounded " +
-                            "transition ease-in-out bg-gradient-to-r from-text to-secondary hover:bg-gradient-to-br " +
-                            "duration-150"}
-                    >
-                        <span className={"text-background"}>Create new account</span>
-                    </button>
+                    <SignUp />
 
                     {/*Socials*/}
                     <button

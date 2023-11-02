@@ -8,8 +8,9 @@ export default function Header() {
     const {authData} = useContext(AuthContext)
 
     return (
-        <header className={"flex w-full px-12 py-6 justify-between border-b-2 bg-background items-start shadow-sm"}>
+        <header className={"flex w-full px-6 md:px-12 py-6 justify-between border-b-2 bg-background items-start shadow-sm"}>
             {authData.token !== null ?? <MainMenu />}
+            {/*<MainMenu />*/}
             <a
                 href={Paths.HOME}
                 className={"text-3xl font-bold bg-gradient-to-r text-transparent bg-clip-text from-secondary " +
