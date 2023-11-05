@@ -44,11 +44,11 @@ export default function SignUp() {
                             <Transition.Child
                                 as={Fragment}
                                 enter="ease-out duration-500"
-                                enterFrom="opacity-0 scale-0"
+                                enterFrom="opacity-0 scale-50"
                                 enterTo="opacity-100 scale-100"
                                 leave="ease-in duration-500"
                                 leaveFrom="opacity-100 scale-100"
-                                leaveTo="opacity-0 scale-0"
+                                leaveTo="opacity-0 scale-50"
                             >
                                 <Dialog.Panel
                                     className={"transform overflow-hidden transition-all w-full px-6 py-12 " +
