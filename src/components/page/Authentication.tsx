@@ -23,7 +23,10 @@ export default function Authentication() {
 
     return (
         <div className={"flex w-full justify-center px-0 md:px-6"}>
-            <div className={"flex flex-col shadow-sm border-2 px-6 py-12 gap-y-6 justify-center w-full md:w-1/2"}>
+            <div
+                className={"flex flex-col shadow-sm md:border-2 px-6 py-12 gap-y-6 justify-center w-full md:w-2/3 " +
+                    "lg:w-1/2"}
+            >
                 <form onSubmit={handleSubmit(onSubmit)} className={"w-full flex flex-col gap-y-12"}>
                     {/*Fields*/}
                     <div className={"w-full flex flex-col gap-y-6"}>
