@@ -1,45 +1,56 @@
 import FloatingLabelInput from "../util/FloatingLabelInput.tsx"
 import SignUp from "./SignUp.tsx"
 import useSignIn from "../security/useSignIn.ts"
-import {SignInRequest} from "../../api/request/SignInRequest.ts"
+import {FieldValues, useForm} from "react-hook-form"
 
 export default function Authentication() {
 
+    const {
+        register,
+        handleSubmit,
+        formState: {
+            errors,
+            isSubmitting
+        },
+        reset
+    } = useForm()
     const { signIn } = useSignIn()
 
-    const signInRequest: SignInRequest = {
-        email: "",
-        password: ""
-    }
-
-    function handleSubmit(e: { preventDefault: () => void }) {
-        e.preventDefault()
-        signIn(signInRequest)
+    function onSubmit(data: FieldValues) {
+        console.log(data)
+        reset()
     }
 
     return (
         <div className={"flex w-full justify-center px-0 md:px-6"}>
             <div className={"flex flex-col shadow-sm border-2 px-6 py-12 gap-y-6 justify-center w-full md:w-1/2"}>
-                <form onSubmit={handleSubmit} className={"w-full flex flex-col gap-y-12"}>
+                <form onSubmit={handleSubmit(onSubmit)} className={"w-full flex flex-col gap-y-12"}>
                     {/*Fields*/}
                     <div className={"w-full flex flex-col gap-y-6"}>
                         <FloatingLabelInput
+                            register={register}
                             id={"signInEmail"}
                             name={"signInEmail"}
                             type={"email"}
                             label={"Email address"}
+                            required={"Email is mandatory."}
+                            errors={errors}
                         />
                         <FloatingLabelInput
+                            register={register}
                             id={"signInPassword"}
                             name={"signInPassword"}
                             type={"password"}
                             label={"Password"}
+                            required={"Password is mandatory."}
+                            errors={errors}
                         />
                     </div>
 
                     {/*Sign in*/}
                     <button
                         type={"submit"}
+                        disabled={isSubmitting}
                         className={"flex w-full justify-center gap-x-3 items-center border px-6 py-1.5 rounded " +
                             "transition ease-in-out bg-gradient-to-r from-primary to-accent hover:bg-gradient-to-br " +
                             "duration-150"}

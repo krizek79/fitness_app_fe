@@ -1,17 +1,28 @@
 import React, {Fragment, useState} from "react";
 import {Dialog, Transition} from "@headlessui/react";
 import FloatingLabelInput from "../util/FloatingLabelInput.tsx";
+import {FieldValues, useForm} from "react-hook-form";
 
 export default function SignUp() {
 
     const [open, setOpen] = useState(false)
+    const {
+        register,
+        handleSubmit,
+        formState: {
+            errors,
+            isSubmitting
+        },
+        reset
+    } = useForm()
 
     function toggleOpen() {
         setOpen(!open)
     }
 
-    function handleSubmit(e: { preventDefault: () => void }) {
-        e.preventDefault()
+    function onSubmit(data: FieldValues) {
+        console.log(data)
+        reset()
     }
 
     return (
@@ -55,38 +66,51 @@ export default function SignUp() {
                                         "bg-background shadow-sm md:max-w-xl flex flex-col gap-y-6"}
                                 >
                                     <form
-                                        onSubmit={handleSubmit}
+                                        onSubmit={handleSubmit(onSubmit)}
                                         className={"w-full flex flex-col gap-y-12"}
                                     >
                                         <div className={"flex flex-col gap-y-6"}>
                                             <FloatingLabelInput
+                                                register={register}
                                                 id={"signUpEmail"}
                                                 name={"signUpEmail"}
                                                 type={"email"}
                                                 label={"Email address"}
+                                                required={"Email is mandatory."}
+                                                errors={errors}
                                             />
                                             <FloatingLabelInput
+                                                register={register}
                                                 id={"signUpName"}
                                                 name={"signUpName"}
                                                 type={"text"}
                                                 label={"Name"}
+                                                required={"Name is mandatory."}
+                                                errors={errors}
                                             />
                                             <FloatingLabelInput
+                                                register={register}
                                                 id={"signUpPassword"}
                                                 name={"signUpPassword"}
                                                 type={"password"}
                                                 label={"Password"}
+                                                required={"Password is mandatory."}
+                                                errors={errors}
                                             />
                                             <FloatingLabelInput
+                                                register={register}
                                                 id={"signUpMatchingPassword"}
                                                 name={"signUpMatchingPassword"}
                                                 type={"password"}
                                                 label={"Repeat password"}
+                                                required={"Matching password is mandatory."}
+                                                errors={errors}
                                             />
                                         </div>
 
                                         <button
                                             type={"submit"}
+                                            disabled={isSubmitting}
                                             className={"flex w-full justify-center gap-x-3 items-center border px-6 " +
                                                 "py-1.5 rounded transition ease-in-out bg-gradient-to-r from-text " +
                                                 "to-secondary hover:bg-gradient-to-br duration-150"}
