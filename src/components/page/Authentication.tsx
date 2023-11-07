@@ -1,26 +1,26 @@
 import FloatingLabelInput from "../util/FloatingLabelInput.tsx"
-import SignUp from "./SignUp.tsx"
+import SignUp from "../security/SignUp.tsx"
 import {useForm} from "react-hook-form"
 import {zodResolver} from "@hookform/resolvers/zod"
 import {localAuthenticationRequest, LocalAuthenticationRequest} from "../../schema/LocalAuthenticationRequest.ts"
+import useSignIn from "../../hook/useSignIn.ts";
 
 export default function Authentication() {
 
+    const {signIn} = useSignIn()
     const {
         register,
         handleSubmit,
         formState: {
             errors,
             isSubmitting
-        },
-        reset
+        }
     } = useForm<LocalAuthenticationRequest>({
         resolver: zodResolver(localAuthenticationRequest)
     })
 
     function onSubmit(data: LocalAuthenticationRequest) {
-        console.log(data)
-        reset()
+        signIn(data)
     }
 
     return (
@@ -56,7 +56,7 @@ export default function Authentication() {
                         disabled={isSubmitting}
                         className={"flex w-full justify-center gap-x-3 items-center border px-6 py-1.5 rounded " +
                             "transition ease-in-out bg-gradient-to-r from-primary to-accent hover:bg-gradient-to-br " +
-                            "duration-150"}
+                            "duration-150 disabled:opacity-50 disabled:cursor-not-allowed"}
                     >
                         <span className={"text-text"}>Sign in</span>
                     </button>
@@ -72,7 +72,6 @@ export default function Authentication() {
                 {/*Buttons*/}
                 <div className={"flex flex-col gap-y-3"}>
                     <SignUp />
-
                     {/*Socials*/}
                     <button
                         className={"flex w-full justify-center gap-x-3 items-center border px-6 py-1.5 rounded " +

@@ -4,9 +4,11 @@ import FloatingLabelInput from "../util/FloatingLabelInput.tsx"
 import {FieldValues, useForm} from "react-hook-form"
 import {zodResolver} from "@hookform/resolvers/zod"
 import {signUpRequest, SignUpRequest} from "../../schema/SignUpRequest.ts";
+import useSignUp from "../../hook/useSignUp.ts";
 
 export default function SignUp() {
 
+    const {signUp} = useSignUp()
     const [open, setOpen] = useState(false)
     const {
         register,
@@ -24,8 +26,8 @@ export default function SignUp() {
         setOpen(!open)
     }
 
-    function onSubmit(data: FieldValues) {
-        console.log(data)
+    function onSubmit(data: SignUpRequest) {
+        signUp(data)
         reset()
     }
 
