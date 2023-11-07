@@ -1,5 +1,5 @@
 import { createContext } from 'react'
-import {UserResponse} from "../../api/response/UserResponse.ts"
+import {UserResponse} from "../../schema/UserResponse.ts"
 import {LoginParams} from "./LoginParams.ts";
 
 interface AuthContextProps {

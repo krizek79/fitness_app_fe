@@ -1,7 +1,9 @@
-import React, {Fragment, useState} from "react";
-import {Dialog, Transition} from "@headlessui/react";
-import FloatingLabelInput from "../util/FloatingLabelInput.tsx";
-import {FieldValues, useForm} from "react-hook-form";
+import React, {Fragment, useState} from "react"
+import {Dialog, Transition} from "@headlessui/react"
+import FloatingLabelInput from "../util/FloatingLabelInput.tsx"
+import {FieldValues, useForm} from "react-hook-form"
+import {zodResolver} from "@hookform/resolvers/zod"
+import {signUpRequest, SignUpRequest} from "../../schema/SignUpRequest.ts";
 
 export default function SignUp() {
 
@@ -14,7 +16,9 @@ export default function SignUp() {
             isSubmitting
         },
         reset
-    } = useForm()
+    } = useForm<SignUpRequest>({
+        resolver: zodResolver(signUpRequest)
+    })
 
     function toggleOpen() {
         setOpen(!open)
@@ -72,38 +76,34 @@ export default function SignUp() {
                                         <div className={"flex flex-col gap-y-6"}>
                                             <FloatingLabelInput
                                                 register={register}
-                                                id={"signUpEmail"}
-                                                name={"signUpEmail"}
+                                                id={"email"}
+                                                name={"email"}
                                                 type={"email"}
                                                 label={"Email address"}
-                                                required={"Email is mandatory."}
                                                 errors={errors}
                                             />
                                             <FloatingLabelInput
                                                 register={register}
-                                                id={"signUpName"}
-                                                name={"signUpName"}
+                                                id={"name"}
+                                                name={"name"}
                                                 type={"text"}
                                                 label={"Name"}
-                                                required={"Name is mandatory."}
                                                 errors={errors}
                                             />
                                             <FloatingLabelInput
                                                 register={register}
-                                                id={"signUpPassword"}
-                                                name={"signUpPassword"}
+                                                id={"password"}
+                                                name={"password"}
                                                 type={"password"}
                                                 label={"Password"}
-                                                required={"Password is mandatory."}
                                                 errors={errors}
                                             />
                                             <FloatingLabelInput
                                                 register={register}
-                                                id={"signUpMatchingPassword"}
-                                                name={"signUpMatchingPassword"}
+                                                id={"matchingPassword"}
+                                                name={"matchingPassword"}
                                                 type={"password"}
                                                 label={"Repeat password"}
-                                                required={"Matching password is mandatory."}
                                                 errors={errors}
                                             />
                                         </div>

@@ -1,28 +1,22 @@
-import { ReactElement, ReactNode, ReactPortal } from "react"
-import {DeepMap, FieldError, FieldValues, UseFormRegister} from "react-hook-form"
+import {DeepRequired, FieldErrorsImpl, FieldValues, GlobalError, Path, UseFormRegister} from "react-hook-form"
 
-type FloatingLabelInputParams = {
+type FloatingLabelInputParams<T extends FieldValues> = {
     id: string
-    name: string
+    name: Path<T>
     type: string
-    label: string | number | boolean | ReactElement | Iterable<ReactNode> | ReactPortal | null | undefined
-    required: string | undefined
-    register: UseFormRegister<FieldValues>
-    errors: DeepMap<FieldValues, FieldError>
-    validate?: undefined
+    label: string
+    register: UseFormRegister<T>
+    errors: Partial<FieldErrorsImpl<DeepRequired<T>>> & {root?: Record<string, GlobalError> & GlobalError}
 }
 
-export default function FloatingLabelInput(props: FloatingLabelInputParams) {
+export default function FloatingLabelInput<T extends FieldValues>(props: FloatingLabelInputParams<T>) {
 
     const error = props.errors[props.name]
 
     return (
         <div className="relative">
             <input
-                {...props.register(props.name, {
-                    required: props.required,
-                    validate: props.validate
-                })}
+                {...props.register(props.name)}
                 id={props.id}
                 name={props.name}
                 type={props.type}
@@ -37,7 +31,7 @@ export default function FloatingLabelInput(props: FloatingLabelInputParams) {
             >
                 {props.label}
             </label>
-            {error && <p className="text-red-500 text-sm pt-3">{error.message}</p>}
+            {error && <p className="text-red-500 text-sm pt-3">{error.message as string}</p>}
         </div>
     )
 }

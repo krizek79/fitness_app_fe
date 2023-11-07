@@ -1,7 +1,8 @@
 import FloatingLabelInput from "../util/FloatingLabelInput.tsx"
 import SignUp from "./SignUp.tsx"
-import useSignIn from "../security/useSignIn.ts"
-import {FieldValues, useForm} from "react-hook-form"
+import {useForm} from "react-hook-form"
+import {zodResolver} from "@hookform/resolvers/zod"
+import {localAuthenticationRequest, LocalAuthenticationRequest} from "../../schema/LocalAuthenticationRequest.ts"
 
 export default function Authentication() {
 
@@ -13,10 +14,11 @@ export default function Authentication() {
             isSubmitting
         },
         reset
-    } = useForm()
-    const { signIn } = useSignIn()
+    } = useForm<LocalAuthenticationRequest>({
+        resolver: zodResolver(localAuthenticationRequest)
+    })
 
-    function onSubmit(data: FieldValues) {
+    function onSubmit(data: LocalAuthenticationRequest) {
         console.log(data)
         reset()
     }
@@ -33,19 +35,17 @@ export default function Authentication() {
                         <FloatingLabelInput
                             register={register}
                             id={"signInEmail"}
-                            name={"signInEmail"}
+                            name={"email"}
                             type={"email"}
                             label={"Email address"}
-                            required={"Email is mandatory."}
                             errors={errors}
                         />
                         <FloatingLabelInput
                             register={register}
                             id={"signInPassword"}
-                            name={"signInPassword"}
+                            name={"password"}
                             type={"password"}
                             label={"Password"}
-                            required={"Password is mandatory."}
                             errors={errors}
                         />
                     </div>
