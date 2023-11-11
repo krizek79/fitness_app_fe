@@ -15,8 +15,7 @@ module.exports = {
         background: '#f2f2f2',
         primary: '#dda713',
         secondary: '#3E3E3E',
-        accent: '#fcde93',
-        facebook: '#39569C'
+        accent: '#fcde93'
       }
     },
   },

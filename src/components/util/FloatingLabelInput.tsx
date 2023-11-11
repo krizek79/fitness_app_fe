@@ -25,7 +25,7 @@ export default function FloatingLabelInput<T extends FieldValues>(props: Floatin
                 placeholder={""}
             />
             <label htmlFor={props.id}
-                   className={"absolute left-0 -top-3 text-sm transition-all text-secondary " +
+                   className={"absolute left-0 -top-3 text-sm transition-all duration-150 text-secondary " +
                        "peer-placeholder-shown:text-base peer-placeholder-shown:text-secondary " +
                        "peer-placeholder-shown:top-3 peer-focus:-top-3 peer-focus:text-secondary peer-focus:text-sm"}
             >

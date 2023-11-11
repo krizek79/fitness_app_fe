@@ -4,6 +4,8 @@ import {useForm} from "react-hook-form"
 import {zodResolver} from "@hookform/resolvers/zod"
 import {localAuthenticationRequest, LocalAuthenticationRequest} from "../../schema/LocalAuthenticationRequest.ts"
 import useSignIn from "../../hook/useSignIn.ts";
+import FacebookButton from "../util/FacebookButton.tsx";
+import GoogleButton from "../util/GoogleButton.tsx";
 
 export default function Authentication() {
 
@@ -14,13 +16,15 @@ export default function Authentication() {
         formState: {
             errors,
             isSubmitting
-        }
+        },
+        reset
     } = useForm<LocalAuthenticationRequest>({
         resolver: zodResolver(localAuthenticationRequest)
     })
 
     function onSubmit(data: LocalAuthenticationRequest) {
         signIn(data)
+        reset()
     }
 
     return (
@@ -73,13 +77,8 @@ export default function Authentication() {
                 <div className={"flex flex-col gap-y-3"}>
                     <SignUp />
                     {/*Socials*/}
-                    <button
-                        className={"flex w-full justify-center gap-x-3 items-center border px-6 py-1.5 rounded " +
-                            "transition ease-in-out bg-facebook duration-150 disabled:opacity-50 cursor-not-allowed"}
-                        disabled={true}
-                    >
-                        <span className={"text-background"}>Continue with Facebook</span>
-                    </button>
+                    <FacebookButton />
+                    <GoogleButton />
                 </div>
             </div>
         </div>

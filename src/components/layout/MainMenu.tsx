@@ -1,10 +1,14 @@
 import { Bars3BottomLeftIcon } from "../icon/Bars3BottomLeftIcon.tsx"
-import React, { Fragment, useState } from "react"
+import React, {Fragment, useContext, useState} from "react"
 import { Dialog, Transition } from "@headlessui/react"
-import {UserCircleIcon} from "../icon/UserCircleIcon.tsx";
+import {UserCircleIcon} from "../icon/UserCircleIcon.tsx"
+import {AuthContext} from "../security/AuthContext.ts"
 
 export default function MainMenu() {
 
+    const {logout, getUser} = useContext(AuthContext)
+    const user = getUser()
+    console.log(user)
     const [open, setOpen] = useState(false)
 
     function toggleOpen() {
@@ -52,6 +56,14 @@ export default function MainMenu() {
                                                 className={"px-6 md:px-12 py-6 flex flex-col gap-y-3 w-full " +
                                                     "border-b-2"}
                                             >
+                                                {/*{user?.profileResponse.profilePictureUrl*/}
+                                                {/*    ? <img*/}
+                                                {/*        src={user?.profileResponse.profilePictureUrl}*/}
+                                                {/*        className={"h-16 w-16 p-0"}*/}
+                                                {/*        alt={"Profile picture"}*/}
+                                                {/*    />*/}
+                                                {/*    : <UserCircleIcon className={"h-16 w-16 p-0"} />*/}
+                                                {/*}*/}
                                                 <UserCircleIcon className={"h-16 w-16 p-0"} />
                                                 <div className={"flex flex-col"}>
                                                         <span className={"text-text text-xl font-medium break-all"}>
@@ -72,12 +84,13 @@ export default function MainMenu() {
                                                 </a>
                                             </div>
                                             <div className={""}>
-                                                <a
+                                                <button
+                                                    onClick={logout}
                                                     className={"flex gap-x-3 w-full px-6 md:px-12 py-6 " +
                                                         "hover:cursor-pointer text-text font-medium"}
                                                 >
                                                     Log out
-                                                </a>
+                                                </button>
                                             </div>
                                         </div>
                                     </Dialog.Panel>

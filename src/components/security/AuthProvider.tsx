@@ -36,7 +36,8 @@ export default function AuthProvider({ children }: AuthProviderProps) {
     const login = (loginParams: LoginParams) => {
         Cookies.set(CookieParams.TOKEN, loginParams.token)
         Cookies.set(CookieParams.EXPIRES_AT, loginParams.expiresAt)
-        Cookies.set(CookieParams.USER, JSON.stringify(loginParams.user))
+        Cookies.set(CookieParams.USER, JSON.stringify(loginParams.userResponse))
+        setAuthData({token: loginParams.token, expiresAt: loginParams.expiresAt})
     }
 
     const logout = () => {

@@ -8,7 +8,7 @@ export default function Footer() {
 
     return (
         <footer className={"flex w-full px-12 py-6 bg-background border-t-2 justify-between shadow-sm"}>
-            {authData.token !== null ?? <StopWatch />}
+            {authData.token ? <StopWatch /> : null}
         </footer>
     )
 }

@@ -1,10 +1,10 @@
 import React, {Fragment, useState} from "react"
 import {Dialog, Transition} from "@headlessui/react"
 import FloatingLabelInput from "../util/FloatingLabelInput.tsx"
-import {FieldValues, useForm} from "react-hook-form"
+import {useForm} from "react-hook-form"
 import {zodResolver} from "@hookform/resolvers/zod"
-import {signUpRequest, SignUpRequest} from "../../schema/SignUpRequest.ts";
-import useSignUp from "../../hook/useSignUp.ts";
+import {signUpRequest, SignUpRequest} from "../../schema/SignUpRequest.ts"
+import useSignUp from "../../hook/useSignUp.ts"
 
 export default function SignUp() {
 
@@ -27,7 +27,7 @@ export default function SignUp() {
     }
 
     function onSubmit(data: SignUpRequest) {
-        signUp(data)
+        signUp(data, toggleOpen)
         reset()
     }
 
@@ -82,14 +82,6 @@ export default function SignUp() {
                                                 name={"email"}
                                                 type={"email"}
                                                 label={"Email address"}
-                                                errors={errors}
-                                            />
-                                            <FloatingLabelInput
-                                                register={register}
-                                                id={"name"}
-                                                name={"name"}
-                                                type={"text"}
-                                                label={"Name"}
                                                 errors={errors}
                                             />
                                             <FloatingLabelInput

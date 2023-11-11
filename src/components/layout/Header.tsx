@@ -9,7 +9,7 @@ export default function Header() {
 
     return (
         <header className={"flex w-full px-6 md:px-12 py-6 justify-between border-b-2 bg-background items-start shadow-sm"}>
-            {authData.token !== null ?? <MainMenu />}
+            {authData.token ? <MainMenu /> : null}
             {/*<MainMenu />*/}
             <a
                 href={Paths.HOME}
