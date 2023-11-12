@@ -1,14 +1,13 @@
-import { Bars3BottomLeftIcon } from "../icon/Bars3BottomLeftIcon.tsx"
+import { Bars3BottomLeftIcon } from "../../icon/Bars3BottomLeftIcon.tsx"
 import React, {Fragment, useContext, useState} from "react"
 import { Dialog, Transition } from "@headlessui/react"
-import {UserCircleIcon} from "../icon/UserCircleIcon.tsx"
-import {AuthContext} from "../security/AuthContext.ts"
+import {UserCircleIcon} from "../../icon/UserCircleIcon.tsx"
+import {AuthContext} from "../../security/AuthContext.ts"
+import {Paths} from "../../../constants/Paths.ts";
 
 export default function MainMenu() {
 
-    const {logout, getUser} = useContext(AuthContext)
-    const user = getUser()
-    console.log(user)
+    const {logout} = useContext(AuthContext)
     const [open, setOpen] = useState(false)
 
     function toggleOpen() {
@@ -76,6 +75,7 @@ export default function MainMenu() {
                                             </div>
                                             <div className={"flex flex-col border-b-2"}>
                                                 <a
+                                                    href={Paths.HOME}
                                                     className={"flex gap-x-3 w-full px-6 md:px-12 py-6 text-text " +
                                                         "hover:cursor-pointer hover:bg-accent transition " +
                                                         "duration-150 font-medium text-xl"}

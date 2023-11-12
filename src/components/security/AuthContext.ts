@@ -14,8 +14,8 @@ interface AuthContextProps {
 
 export const AuthContext = createContext<AuthContextProps>({
     authData: {
-        token: null,
-        expiresAt: null
+        token: "",
+        expiresAt: ""
     },
     login: () => {},
     logout: () => {},

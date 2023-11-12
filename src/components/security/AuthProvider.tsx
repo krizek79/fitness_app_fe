@@ -14,12 +14,13 @@ interface AuthProviderProps {
 export default function AuthProvider({ children }: AuthProviderProps) {
 
     const navigate = useNavigate()
-    const [authData, setAuthData] = useState<{
-        token: string | null
-        expiresAt: string | null
-    }>({
-        token: null,
-        expiresAt: null,
+    const [authData, setAuthData] = useState(() => {
+        const token = Cookies.get(CookieParams.TOKEN);
+        const expiresAt = Cookies.get(CookieParams.EXPIRES_AT);
+        return {
+            token: token || null,
+            expiresAt: expiresAt || null,
+        }
     })
 
     useEffect(() => {

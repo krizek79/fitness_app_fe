@@ -1,6 +1,6 @@
-import StopWatch from "../stopwatch/StopWatch.tsx";
+import StopWatch from "./StopWatch.tsx";
 import {useContext} from "react";
-import {AuthContext} from "../security/AuthContext.ts";
+import {AuthContext} from "../../security/AuthContext.ts";
 
 export default function Footer() {
 

@@ -1,7 +1,7 @@
 import {Route, Routes} from "react-router-dom";
 import {Paths} from "../../constants/Paths.ts";
 import Authentication from "../page/Authentication.tsx";
-import Home from "../page/Home.tsx";
+import Home from "../page/home/Home.tsx";
 import PrivateRoutes from "../security/PrivateRoutes.tsx";
 import Workout from "../page/Workout.tsx";
 import Profile from "../page/Profile.tsx";
