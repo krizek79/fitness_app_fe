@@ -1,14 +1,14 @@
 import React, {Fragment, useState} from "react"
-import {Dialog, Transition} from "@headlessui/react"
-import FloatingLabelInput from "../util/FloatingLabelInput.tsx"
 import {useForm} from "react-hook-form"
 import {zodResolver} from "@hookform/resolvers/zod"
-import {signUpRequest, SignUpRequest} from "../../schema/SignUpRequest.ts"
-import useSignUp from "../../hook/useSignUp.ts"
+import {WorkoutCreateRequest, workoutCreateRequest} from "../../../schema/WorkoutCreateRequest.ts"
+import {Dialog, Transition} from "@headlessui/react"
+import FloatingLabelInput from "../../util/FloatingLabelInput.tsx"
+import useWorkout from "../../../hook/useWorkout.ts"
 
-export default function SignUp() {
+export default function CreateWorkout() {
 
-    const {signUp} = useSignUp()
+    const {createWorkout} = useWorkout()
     const [open, setOpen] = useState(false)
     const {
         register,
@@ -18,16 +18,16 @@ export default function SignUp() {
             isSubmitting
         },
         reset
-    } = useForm<SignUpRequest>({
-        resolver: zodResolver(signUpRequest)
+    } = useForm<WorkoutCreateRequest>({
+        resolver: zodResolver(workoutCreateRequest)
     })
 
     function toggleOpen() {
         setOpen(!open)
     }
 
-    function onSubmit(data: SignUpRequest) {
-        signUp(data, toggleOpen)
+    function onSubmit(data: WorkoutCreateRequest) {
+        createWorkout(data, toggleOpen)
         reset()
     }
 
@@ -36,10 +36,10 @@ export default function SignUp() {
             <button
                 onClick={toggleOpen}
                 className={"flex w-full justify-center gap-x-3 items-center border px-6 py-1.5 " +
-                    "transition ease-in-out bg-gradient-to-r from-text to-secondary hover:bg-gradient-to-br " +
-                    "duration-150"}
+                    "transition ease-in-out bg-gradient-to-r from-primary to-accent hover:bg-gradient-to-br " +
+                    "duration-150 disabled:opacity-50 disabled:cursor-not-allowed"}
             >
-                <span className={"text-background"}>Create new account</span>
+                New workout
             </button>
 
             <Transition show={open} as={Fragment}>
@@ -78,30 +78,13 @@ export default function SignUp() {
                                         <div className={"flex flex-col gap-y-6"}>
                                             <FloatingLabelInput
                                                 register={register}
-                                                id={"email"}
-                                                name={"email"}
-                                                type={"email"}
-                                                label={"Email address"}
-                                                errors={errors}
-                                            />
-                                            <FloatingLabelInput
-                                                register={register}
-                                                id={"password"}
-                                                name={"password"}
-                                                type={"password"}
-                                                label={"Password"}
-                                                errors={errors}
-                                            />
-                                            <FloatingLabelInput
-                                                register={register}
-                                                id={"matchingPassword"}
-                                                name={"matchingPassword"}
-                                                type={"password"}
-                                                label={"Repeat password"}
+                                                id={"name"}
+                                                name={"name"}
+                                                type={"text"}
+                                                label={"Workout name"}
                                                 errors={errors}
                                             />
                                         </div>
-
                                         <button
                                             type={"submit"}
                                             disabled={isSubmitting}
@@ -110,7 +93,7 @@ export default function SignUp() {
                                                 "to-secondary hover:bg-gradient-to-br duration-150 " +
                                                 "disabled:opacity-50 disabled:cursor-not-allowed"}
                                         >
-                                            <span className={"text-background"}>Create new account</span>
+                                            <span className={"text-background"}>Create workout</span>
                                         </button>
                                     </form>
                                 </Dialog.Panel>

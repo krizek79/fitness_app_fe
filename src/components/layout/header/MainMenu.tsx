@@ -24,10 +24,10 @@ export default function MainMenu() {
                 <Dialog as="div" className={"relative z-10"} onClose={setOpen}>
                     <Transition.Child
                         as={Fragment}
-                        enter="ease-in-out duration-500"
+                        enter="ease-in-out duration-300"
                         enterFrom="opacity-0"
                         enterTo="opacity-100"
-                        leave="ease-in-out duration-500"
+                        leave="ease-in-out duration-300"
                         leaveFrom="opacity-100"
                         leaveTo="opacity-0"
                     >
@@ -39,10 +39,10 @@ export default function MainMenu() {
                             <div className={"pointer-events-none fixed inset-y-0 left-0 flex w-2/3 md:w-2/5"}>
                                 <Transition.Child
                                     as={Fragment}
-                                    enter="transform transition ease-in-out duration-500"
+                                    enter="transform transition ease-in-out duration-300"
                                     enterFrom="-translate-x-full"
                                     enterTo="translate-x-0"
-                                    leave="transform transition ease-in-out duration-500"
+                                    leave="transform transition ease-in-out duration-300"
                                     leaveFrom="translate-x-0"
                                     leaveTo="-translate-x-full"
                                 >

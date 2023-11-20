@@ -58,7 +58,7 @@ export default function Authentication() {
                     <button
                         type={"submit"}
                         disabled={isSubmitting}
-                        className={"flex w-full justify-center gap-x-3 items-center border px-6 py-1.5 rounded " +
+                        className={"flex w-full justify-center gap-x-3 items-center border px-6 py-1.5 " +
                             "transition ease-in-out bg-gradient-to-r from-primary to-accent hover:bg-gradient-to-br " +
                             "duration-150 disabled:opacity-50 disabled:cursor-not-allowed"}
                     >

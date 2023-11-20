@@ -14,7 +14,6 @@ export default function useSignIn() {
         authApi.signInLocal(request)
             .then(response => {
                 if (response.status === 200) {
-                    // console.log(response.data)
                     context.login(response.data)
                     navigate(Paths.HOME)
                 }

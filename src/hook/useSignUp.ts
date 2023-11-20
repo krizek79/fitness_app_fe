@@ -7,7 +7,6 @@ export default function useSignUp() {
         authApi.signUp(request)
             .then(response => {
                 if (response.status === 200) {
-                    console.log(response.data)
                     toggleOpen()
                 }
             })
