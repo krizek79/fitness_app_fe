@@ -1,15 +1,17 @@
-import {Route, Routes} from "react-router-dom";
-import {Paths} from "../../constants/Paths.ts";
-import Authentication from "../page/Authentication.tsx";
-import Home from "../page/home/Home.tsx";
-import PrivateRoutes from "../security/PrivateRoutes.tsx";
-import Workout from "../page/Workout.tsx";
-import Profile from "../page/Profile.tsx";
+import {Route, Routes} from "react-router-dom"
+import {Paths} from "../../constants/Paths.ts"
+import Authentication from "../page/Authentication.tsx"
+import Home from "../page/home/Home.tsx"
+import PrivateRoutes from "../security/PrivateRoutes.tsx"
+import Workout from "../page/Workout.tsx"
+import Profile from "../page/Profile.tsx"
+import { Toaster } from "sonner"
 
 export default function Main() {
 
     return (
         <main className={"flex-grow overflow-y-auto bg-background py-6"}>
+            <Toaster richColors closeButton position="top-right" />
             <Routes>
                 <Route path={Paths.AUTH} element={<Authentication />} />
                 <Route element={<PrivateRoutes />}>

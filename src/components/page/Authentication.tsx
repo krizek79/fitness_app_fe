@@ -76,9 +76,6 @@ export default function Authentication() {
                 {/*Buttons*/}
                 <div className={"flex flex-col gap-y-3"}>
                     <SignUp />
-                    {/*Socials*/}
-                    <FacebookButton />
-                    <GoogleButton />
                 </div>
             </div>
         </div>
