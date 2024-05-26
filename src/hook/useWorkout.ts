@@ -3,8 +3,8 @@ import workoutApi from "../api/WorkoutApi.ts"
 import {useNavigate} from "react-router-dom"
 import {Paths} from "../constants/Paths.ts"
 import {WorkoutResponse} from "../schema/WorkoutResponse.ts"
-import {useCallback, useState} from "react";
-import {AxiosError} from "axios";
+import {useCallback, useState} from "react"
+import {AxiosError} from "axios"
 
 export default function useWorkout() {
 
@@ -24,13 +24,13 @@ export default function useWorkout() {
 
     const createWorkout = (request: WorkoutCreateRequest, toggleOpen: () => void) => {
         workoutApi.createWorkout(request)
-            .then(response => {
+            .then((response: { status: number; data: { id: number } }) => {
                 if (response.status === 200) {
                     toggleOpen()
                     navigate(Paths.WORKOUT + `?id=${response.data.id}`)
                 }
             })
-            .catch(error => {
+            .catch((error: { response: { data: { message: string } } }) => {
                 if (error.response?.data?.message) {
                     console.log(error)
                 }

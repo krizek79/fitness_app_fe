@@ -5,8 +5,8 @@ import {LoginParams} from "./LoginParams.ts";
 interface AuthContextProps {
     authData: {
         token: string | null
-        expiresAt: string | null
-    };
+        expiresAt: Date | null
+    }
     login: (loginParams: LoginParams) => void
     logout: () => void
     getUser: () => UserResponse | null
@@ -15,7 +15,7 @@ interface AuthContextProps {
 export const AuthContext = createContext<AuthContextProps>({
     authData: {
         token: "",
-        expiresAt: ""
+        expiresAt: null
     },
     login: () => {},
     logout: () => {},

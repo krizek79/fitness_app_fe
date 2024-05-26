@@ -1,4 +1,4 @@
-import {ProfileResponse} from "./ProfileResponse.ts";
+import {ProfileResponse} from "./ProfileResponse.ts"
 
 export type UserResponse = {
     id: number,

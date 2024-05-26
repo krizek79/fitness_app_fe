@@ -6,13 +6,13 @@ export default function useSignUp() {
 
     const signUp = (request: SignUpRequest, toggleOpen: () => void) => {
         authApi.signUp(request)
-            .then(response => {
+            .then((response: { status: number }) => {
                 if (response.status === 200) {
                     toggleOpen()
                     toast.success("Sign in successful", { duration: 4000 })
                 }
             })
-            .catch(error => {
+            .catch((error: { response: { data: { message: string } } }) => {
                 if (error.response?.data?.message) {
                     console.log(error)
                     toast.error(error.response?.data?.message)

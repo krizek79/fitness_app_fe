@@ -1,5 +1,6 @@
 import useWorkout from "../../hook/useWorkout.ts"
 import {useEffect, useState} from "react"
+import GoBackButton from "../util/GoBackButton.tsx"
 
 export default function Workout() {
 
@@ -21,6 +22,7 @@ export default function Workout() {
                 <div
                     className={"flex flex-col px-6 gap-y-6 w-full md:w-3/4 lg:w-2/3"}
                 >
+                    <GoBackButton />
                     {loading && <>Loading...</>}
                     {workout &&
                         <div className={"flex flex-wrap gap-x-3 text-2xl"}>

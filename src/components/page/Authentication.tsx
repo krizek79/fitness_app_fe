@@ -3,9 +3,7 @@ import SignUp from "../security/SignUp.tsx"
 import {useForm} from "react-hook-form"
 import {zodResolver} from "@hookform/resolvers/zod"
 import {localAuthenticationRequest, LocalAuthenticationRequest} from "../../schema/LocalAuthenticationRequest.ts"
-import useSignIn from "../../hook/useSignIn.ts";
-import FacebookButton from "../util/FacebookButton.tsx";
-import GoogleButton from "../util/GoogleButton.tsx";
+import useSignIn from "../../hook/useSignIn.ts"
 
 export default function Authentication() {
 

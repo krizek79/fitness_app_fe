@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react";
+import {useEffect, useState} from "react"
 
 export default function useStopWatch() {
 
@@ -9,7 +9,7 @@ export default function useStopWatch() {
         let interval: number | undefined = undefined
         if (isRunning) {
             interval = window.setInterval(() => {
-                setTime((prevTime) => prevTime + 1)
+                setTime((prevTime: number) => prevTime + 1)
             }, 10)
         }
 
@@ -21,7 +21,7 @@ export default function useStopWatch() {
     }, [isRunning])
 
     const handleStartStop = () => {
-        setIsRunning((prevState) => !prevState)
+        setIsRunning((prevState: boolean) => !prevState)
     }
 
     const handleReset = () => {

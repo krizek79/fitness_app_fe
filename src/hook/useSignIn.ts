@@ -5,6 +5,7 @@ import {Paths} from "../constants/Paths.ts"
 import {LocalAuthenticationRequest} from "../schema/LocalAuthenticationRequest.ts"
 import authApi from "../api/AuthApi.ts"
 import { toast } from 'sonner'
+import { AuthenticationResponse } from "../schema/AuthenticationResponse.ts"
 
 export default function useSignIn() {
 
@@ -13,14 +14,14 @@ export default function useSignIn() {
 
     const signIn = (request: LocalAuthenticationRequest) => {
         authApi.signInLocal(request)
-            .then(response => {
+            .then((response: { status: number; data: AuthenticationResponse }) => {
                 if (response.status === 200) {
                     context.login(response.data)
                     navigate(Paths.HOME)
                     toast.success("Sign in successful", { duration: 4000 })
                 }
             })
-            .catch(error => {
+            .catch((error: { response: { data: { message: string } } }) => {
                 if (error.response?.data?.message) {
                     console.log(error)
                 }

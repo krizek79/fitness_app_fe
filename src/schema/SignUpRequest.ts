@@ -6,7 +6,7 @@ export const signUpRequest = z.object({
         message: "Password should be at least 4 characters long"
     }),
     matchingPassword: z.string()
-}).refine(data => data.password === data.matchingPassword, {
+}).refine((data: { password: string; matchingPassword: string; }) => data.password === data.matchingPassword, {
     message: "Passwords must match",
     path: ["matchingPassword"]
 })
