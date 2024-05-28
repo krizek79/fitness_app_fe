@@ -13,7 +13,7 @@ export default function useSignIn() {
     const navigate = useNavigate()
 
     const signIn = (request: LocalAuthenticationRequest) => {
-        authApi.signInLocal(request)
+        authApi.signIn(request)
             .then((response: { status: number; data: AuthenticationResponse }) => {
                 if (response.status === 200) {
                     context.login(response.data)

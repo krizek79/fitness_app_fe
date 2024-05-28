@@ -6,7 +6,7 @@ const AUTH_API_BASE_URL = "http://localhost:8080/auth"
 
 export default new class AuthApi {
 
-    signInLocal(request: LocalAuthenticationRequest) {
+    signIn(request: LocalAuthenticationRequest) {
         return axios.post(AUTH_API_BASE_URL + "/sign-in", request)
     }
 

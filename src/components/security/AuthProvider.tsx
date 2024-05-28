@@ -15,8 +15,9 @@ export default function AuthProvider({ children }: AuthProviderProps) {
 
     const navigate = useNavigate()
     const [authData, setAuthData] = useState(() => {
-        const token = Cookies.get(CookieParams.TOKEN);
-        const expiresAt = Cookies.get(CookieParams.EXPIRES_AT);
+        const token = Cookies.get(CookieParams.TOKEN)
+        const expiresAtCookieValue = Cookies.get(CookieParams.EXPIRES_AT)
+        const expiresAt = expiresAtCookieValue ? new Date(expiresAtCookieValue) : null
         return {
             token: token || null,
             expiresAt: expiresAt || null,
@@ -36,7 +37,7 @@ export default function AuthProvider({ children }: AuthProviderProps) {
 
     const login = (loginParams: LoginParams) => {
         Cookies.set(CookieParams.TOKEN, loginParams.token)
-        Cookies.set(CookieParams.EXPIRES_AT, loginParams.expiresAt)
+        Cookies.set(CookieParams.EXPIRES_AT, loginParams.expiresAt.toString())
         Cookies.set(CookieParams.USER, JSON.stringify(loginParams.userResponse))
         setAuthData({token: loginParams.token, expiresAt: loginParams.expiresAt})
     }
