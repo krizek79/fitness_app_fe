@@ -3,7 +3,7 @@ import {Paths} from "../../constants/Paths.ts"
 import Authentication from "../page/Authentication.tsx"
 import Home from "../page/home/Home.tsx"
 import PrivateRoutes from "../security/PrivateRoutes.tsx"
-import Workout from "../page/Workout.tsx"
+import WorkoutDetail from "../page/WorkoutDetail.tsx"
 import Profile from "../page/Profile.tsx"
 import { Toaster } from "sonner"
 
@@ -16,7 +16,7 @@ export default function Main() {
                 <Route path={Paths.AUTH} element={<Authentication />} />
                 <Route element={<PrivateRoutes />}>
                     <Route index path={Paths.HOME} element={<Home />} />
-                    <Route index path={Paths.WORKOUT} element={<Workout />} />
+                    <Route index path={Paths.WORKOUT} element={<WorkoutDetail />} />
                     <Route index path={Paths.PROFILE} element={<Profile />} />
                 </Route>
             </Routes>

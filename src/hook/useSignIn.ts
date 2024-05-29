@@ -18,7 +18,6 @@ export default function useSignIn() {
                 if (response.status === 200) {
                     context.login(response.data)
                     navigate(Paths.HOME)
-                    toast.success("Sign in successful", { duration: 4000 })
                 }
             })
             .catch((error: { response: { data: { message: string } } }) => {

@@ -3,11 +3,14 @@ import workoutApi from "../api/WorkoutApi.ts"
 import {useNavigate} from "react-router-dom"
 import {Paths} from "../constants/Paths.ts"
 import {WorkoutResponse} from "../schema/WorkoutResponse.ts"
-import {useCallback, useState} from "react"
-import {AxiosError} from "axios"
+import {useCallback, useContext, useState} from "react"
+import {AxiosError, AxiosResponse} from "axios"
+import { AuthContext } from "../components/security/AuthContext.ts"
+import { toast } from "sonner"
 
 export default function useWorkout() {
 
+    const { logout } = useContext(AuthContext)
     const navigate = useNavigate()
     const [workout, setWorkout] = useState<WorkoutResponse | null>(null)
 
@@ -24,16 +27,18 @@ export default function useWorkout() {
 
     const createWorkout = (request: WorkoutCreateRequest, toggleOpen: () => void) => {
         workoutApi.createWorkout(request)
-            .then((response: { status: number; data: { id: number } }) => {
+            .then((response: AxiosResponse<WorkoutResponse>) => {
                 if (response.status === 200) {
                     toggleOpen()
                     navigate(Paths.WORKOUT + `?id=${response.data.id}`)
                 }
             })
-            .catch((error: { response: { data: { message: string } } }) => {
-                if (error.response?.data?.message) {
-                    console.log(error)
+            .catch((error: AxiosError) => {
+                if (error.status === 401) {
+                    logout()
                 }
+                console.log(error)
+                toast.error("Oops... Something went wrong.")
             })
     }
 
