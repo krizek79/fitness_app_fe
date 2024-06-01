@@ -9,6 +9,7 @@ export default function WorkoutDetail() {
     const workoutId = urlParams.get("id")
     const [loading, setLoading] = useState(true)
     const { workout, fetchWorkout } = useWorkout()
+    const [descriptionShowMore, descriptionSetShowMore] = useState(false)
 
     useEffect(() => {
         if (workoutId) {
@@ -16,6 +17,13 @@ export default function WorkoutDetail() {
             fetchWorkout(workoutId).then(() => setLoading(false))
         }
     }, [fetchWorkout, workoutId])
+
+    const toggleDescriptionShowMore = () => {
+        descriptionSetShowMore(prevShowMore => !prevShowMore)
+    }
+
+    const description = workout?.description || ""
+    const shortDescription = description.length > 100 ? description.slice(0, 100) + "..." : description
 
     return (
         <>
@@ -40,6 +48,40 @@ export default function WorkoutDetail() {
                                     <a href="" className="text-primary hover:underline">{workout.authorName}</a>
                                 </div>
                             </div>
+                            <div className={"flex flex-wrap gap-x-3 gap-y-3"}>
+                                {workout.tagResponseList.length > 0 && (
+                                    <div className="flex flex-col gap-y-1.5">
+                                        <span className="text-text font-medium">Tags:</span>
+                                        <div className={"flex flex-wrap gap-x-3 gap-y-3"}>
+                                            {workout.tagResponseList.map((tag) => (
+                                                <div
+                                                    key={tag.id}
+                                                    className={"flex-shrink-0 text-sm px-3 py-1.5 border border-primary text-secondary " +
+                                                    "bg-background"}
+                                                >
+                                                    {tag.name}
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                            {workout.description && (
+                                <div className="flex flex-col gap-y-1.5">
+                                    <span className="text-text font-medium">Description:</span>
+                                    <p className="text-secondary">
+                                        {descriptionShowMore ? description : shortDescription}
+                                        {description.length > 100 && (
+                                            <span 
+                                                className="text-text cursor-pointer hover:underline ml-2" 
+                                                onClick={toggleDescriptionShowMore}
+                                            >
+                                                {descriptionShowMore ? "Show less" : "Show more"}
+                                            </span>
+                                        )}
+                                    </p>
+                                </div>
+                            )}
                         </div>
                     }
                 </div>

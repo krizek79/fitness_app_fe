@@ -6,6 +6,7 @@ import {LocalAuthenticationRequest} from "../schema/LocalAuthenticationRequest.t
 import authApi from "../api/AuthApi.ts"
 import { toast } from 'sonner'
 import { AuthenticationResponse } from "../schema/AuthenticationResponse.ts"
+import { AxiosError } from "axios"
 
 export default function useSignIn() {
 
@@ -20,10 +21,8 @@ export default function useSignIn() {
                     navigate(Paths.HOME)
                 }
             })
-            .catch((error: { response: { data: { message: string } } }) => {
-                if (error.response?.data?.message) {
-                    console.log(error)
-                }
+            .catch((error: AxiosError) => {
+                console.log(error)
                 toast.error("Sign-in failed. Please check your credentials and try again.")
             })
     }

@@ -24,16 +24,22 @@ export default function WorkoutPreview({ workout }: WorkoutPreviewProps) {
                     )}
                 </div>
                 {/*Tags*/}
-                <div className={"flex flex-wrap gap-x-3 gap-y-3"}>
-                    {workout.tagResponseList.map((tag) => (
-                        <div
-                            key={tag.id}
-                            className={"flex-shrink-0 text-sm px-3 py-1.5 border border-primary text-secondary bg-background"}
-                        >
-                            {tag.name}
+                {workout.tagResponseList.length > 0 && (
+                    <div className="flex flex-col gap-y-1.5">
+                        <span className="text-text">Tags:</span>
+                        <div className={"flex flex-wrap gap-x-3 gap-y-3"}>
+                            {workout.tagResponseList.map((tag) => (
+                                <div
+                                    key={tag.id}
+                                    className={"flex-shrink-0 text-sm px-3 py-1.5 border border-primary text-secondary " +
+                                    "bg-background"}
+                                >
+                                    {tag.name}
+                                </div>
+                            ))}
                         </div>
-                    ))}
-                </div>
+                    </div>
+                )}
             </div>
         </a>
     )

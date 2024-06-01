@@ -1,7 +1,7 @@
 import React, {Fragment, useState} from "react"
 import {useForm} from "react-hook-form"
 import {zodResolver} from "@hookform/resolvers/zod"
-import {WorkoutCreateRequest, workoutCreateRequest} from "../../../schema/WorkoutCreateRequest.ts"
+import {WorkoutCreateRequest, workoutCreateRequestSchema} from "../../../schema/WorkoutCreateRequest.ts"
 import {Dialog, Transition} from "@headlessui/react"
 import FloatingLabelInput from "../../util/FloatingLabelInput.tsx"
 import useWorkout from "../../../hook/useWorkout.ts"
@@ -19,7 +19,7 @@ export default function CreateWorkout() {
         },
         reset
     } = useForm<WorkoutCreateRequest>({
-        resolver: zodResolver(workoutCreateRequest)
+        resolver: zodResolver(workoutCreateRequestSchema)
     })
 
     function toggleOpen() {

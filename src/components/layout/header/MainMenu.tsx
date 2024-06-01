@@ -52,7 +52,7 @@ export default function MainMenu() {
                                                 "bg-background"}
                                         >
                                             <div
-                                                className={"px-6 md:px-12 py-6 flex flex-col gap-y-3 w-full " +
+                                                className={"px-6 md:px-12 py-6 flex flex-row gap-x-3 w-full items-center " +
                                                     "border-b-2"}
                                             >
                                                 {/*{user?.profileResponse.profilePictureUrl*/}
