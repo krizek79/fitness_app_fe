@@ -1,22 +1,12 @@
-import useWorkout from "../../hook/useWorkout.ts"
-import {useEffect, useState} from "react"
-import GoBackButton from "../util/GoBackButton.tsx"
-import Loading from "../util/Loading.tsx"
+import useWorkout from "../../../hook/useWorkout.ts"
+import {useState} from "react"
+import GoBackButton from "../../util/GoBackButton.tsx"
+import Loading from "../../util/Loading.tsx"
 
 export default function WorkoutDetail() {
-
-    const urlParams = new URLSearchParams(window.location.search)
-    const workoutId = urlParams.get("id")
-    const [loading, setLoading] = useState(true)
-    const { workout, fetchWorkout } = useWorkout()
+    
+    const { loading, handleEdit, workout } = useWorkout()
     const [descriptionShowMore, descriptionSetShowMore] = useState(false)
-
-    useEffect(() => {
-        if (workoutId) {
-            setLoading(true)
-            fetchWorkout(workoutId).then(() => setLoading(false))
-        }
-    }, [fetchWorkout, workoutId])
 
     const toggleDescriptionShowMore = () => {
         descriptionSetShowMore(prevShowMore => !prevShowMore)
@@ -84,6 +74,22 @@ export default function WorkoutDetail() {
                             )}
                         </div>
                     }
+                    <div className="flex flex-col md:flex-row gap-x-3 gap-y-3">
+                        <button
+                            onClick={handleEdit()}
+                            className={"flex w-full justify-center gap-x-3 items-center border-2 px-6 py-1.5 border-primary " +
+                                "transition ease-in-out hover:bg-accent duration-150"}
+                        >
+                            Edit
+                        </button>
+                        <button
+                            className={"flex w-full justify-center gap-x-3 items-center border px-6 py-1.5 " +
+                                "transition ease-in-out bg-gradient-to-r from-primary to-accent hover:bg-gradient-to-br " +
+                                "duration-150"}
+                        >
+                            Start
+                        </button>
+                    </div>
                 </div>
             </div>
         </>
