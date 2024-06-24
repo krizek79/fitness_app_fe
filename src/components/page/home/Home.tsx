@@ -1,15 +1,16 @@
-import { useState } from "react";
-import useHome from "../../../hook/useHome.ts";
-import CreateWorkout from "./CreateWorkout.tsx";
-import WorkoutPreview from "./WorkoutPreview.tsx";
-import ShowMoreButton from "../../util/ShowMoreButton.tsx";
-import Loading from "../../util/Loading.tsx";
+import { useState } from "react"
+import CreateWorkout from "./CreateWorkout.tsx"
+import WorkoutPreview from "./WorkoutPreview.tsx"
+import ShowMoreButton from "../../util/ShowMoreButton.tsx"
+import Loading from "../../util/Loading.tsx"
+import { useFilterWorkouts } from "../../../hook/useWorkout.ts"
 
 
 export default function Home() {
 
     const [page, setPage] = useState(0)
-    const { loading, workouts, hasMore } = useHome(page)
+    const { filterWorkoutsLoading, workouts, hasMore } = useFilterWorkouts(page)
+    console.log(workouts)
 
     function handleShowMore() {
         setPage((prevPageNumber: number) => prevPageNumber + 1)
@@ -29,7 +30,7 @@ export default function Home() {
                             <WorkoutPreview key={workout.id} workout={workout} />
                         ))}
                     </div>
-                    {loading && <Loading />}
+                    {filterWorkoutsLoading && <Loading />}
                     {hasMore && <ShowMoreButton handleShowMore={handleShowMore} />}
                 </div>
             </div>

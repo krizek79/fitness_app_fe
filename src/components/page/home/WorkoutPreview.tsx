@@ -1,7 +1,7 @@
-import { WorkoutResponse } from "../../../schema/WorkoutResponse";
+import { WorkoutDetailResponse } from "../../../schema/WorkoutResponse";
 
 interface WorkoutPreviewProps {
-    workout: WorkoutResponse;
+    workout: WorkoutDetailResponse;
 }
 
 export default function WorkoutPreview({ workout }: WorkoutPreviewProps) {

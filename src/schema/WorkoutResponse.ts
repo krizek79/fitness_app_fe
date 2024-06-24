@@ -1,6 +1,6 @@
 import { TagResponse } from "./TagResponse"
 
-export type WorkoutResponse = {
+export type WorkoutDetailResponse = {
     id: string,
     name: string,
     authorName: string,

@@ -1,15 +1,24 @@
-import useWorkout from "../../../hook/useWorkout.ts"
 import {useState} from "react"
 import GoBackButton from "../../util/GoBackButton.tsx"
 import Loading from "../../util/Loading.tsx"
+import { useNavigate } from "react-router-dom"
+import { Paths } from "../../../constants/Paths.ts"
+import { useGetWorkout } from "../../../hook/useWorkout.ts"
 
 export default function WorkoutDetail() {
     
-    const { loading, handleEdit, workout } = useWorkout()
+    const navigate = useNavigate()
+    const urlParams = new URLSearchParams(window.location.search)
+    const workoutId = urlParams.get("id")
+    const { getWorkoutLoading, workout } = useGetWorkout()
     const [descriptionShowMore, descriptionSetShowMore] = useState(false)
 
     const toggleDescriptionShowMore = () => {
         descriptionSetShowMore(prevShowMore => !prevShowMore)
+    }
+
+    const handleEdit = () => {
+        return () => navigate(`${Paths.WORKOUT_EDIT}?id=${workoutId}`)
     }
 
     const description = workout?.description || ""
@@ -22,7 +31,7 @@ export default function WorkoutDetail() {
                     className={"flex flex-col px-6 gap-y-6 w-full md:w-3/4 lg:w-2/3"}
                 >
                     <GoBackButton />
-                    {loading && <Loading />}
+                    {getWorkoutLoading && <Loading />}
                     {workout && 
                         <div className={"flex flex-col gap-y-3"}>
                             <div className="flex flex-col">

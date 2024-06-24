@@ -1,11 +1,10 @@
-import {SignUpRequest} from "../schema/SignUpRequest.ts"
+import { SignUpRequest } from "../schema/SignUpRequest.ts"
 import axios from "axios"
-import {LocalAuthenticationRequest} from "../schema/LocalAuthenticationRequest.ts";
+import { LocalAuthenticationRequest } from "../schema/LocalAuthenticationRequest.ts"
 
 const AUTH_API_BASE_URL = "http://localhost:8080/auth"
 
-export default new class AuthApi {
-
+export default new (class AuthApi {
     signIn(request: LocalAuthenticationRequest) {
         return axios.post(AUTH_API_BASE_URL + "/sign-in", request)
     }
@@ -13,4 +12,4 @@ export default new class AuthApi {
     signUp(request: SignUpRequest) {
         return axios.post(AUTH_API_BASE_URL + "/sign-up", request)
     }
-}
+})()

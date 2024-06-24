@@ -4,11 +4,11 @@ import {zodResolver} from "@hookform/resolvers/zod"
 import {WorkoutCreateRequest, workoutCreateRequestSchema} from "../../../schema/WorkoutCreateRequest.ts"
 import {Dialog, Transition} from "@headlessui/react"
 import FloatingLabelInput from "../../util/FloatingLabelInput.tsx"
-import useWorkout from "../../../hook/useWorkout.ts"
+import { useCreateWorkout } from "../../../hook/useWorkout.ts"
 
 export default function CreateWorkout() {
 
-    const {createWorkout} = useWorkout()
+    const { createWorkout } = useCreateWorkout()
     const [open, setOpen] = useState(false)
     const {
         register,
