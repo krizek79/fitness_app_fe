@@ -1,15 +1,16 @@
 import {SignUpRequest} from "../schema/SignUpRequest.ts"
 import authApi from "../api/AuthApi.ts"
 import { toast } from 'sonner'
+import { AxiosResponse } from "axios"
 
 export default function useSignUp() {
 
     const signUp = (request: SignUpRequest, toggleOpen: () => void) => {
         authApi.signUp(request)
-            .then((response: { status: number }) => {
+            .then((response: AxiosResponse<string>) => {
                 if (response.status === 200) {
                     toggleOpen()
-                    toast.success("Sign in successful", { duration: 4000 })
+                    toast.success(response.data, { duration: 4000 })
                 }
             })
             .catch((error: { response: { data: { message: string } } }) => {

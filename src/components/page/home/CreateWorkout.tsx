@@ -2,7 +2,7 @@ import React, {Fragment, useState} from "react"
 import {useForm} from "react-hook-form"
 import {zodResolver} from "@hookform/resolvers/zod"
 import {WorkoutCreateRequest, workoutCreateRequestSchema} from "../../../schema/WorkoutCreateRequest.ts"
-import {Dialog, Transition} from "@headlessui/react"
+import {Dialog, DialogPanel, Transition, TransitionChild} from "@headlessui/react"
 import FloatingLabelInput from "../../util/FloatingLabelInput.tsx"
 import { useCreateWorkout } from "../../../hook/useWorkout.ts"
 
@@ -44,7 +44,7 @@ export default function CreateWorkout() {
 
             <Transition show={open} as={Fragment}>
                 <Dialog as="div" className={"relative z-10"} onClose={setOpen}>
-                    <Transition.Child
+                    <TransitionChild
                         as={Fragment}
                         enter="ease-in-out duration-300"
                         enterFrom="opacity-0"
@@ -54,11 +54,11 @@ export default function CreateWorkout() {
                         leaveTo="opacity-0"
                     >
                         <div className={"fixed inset-0 bg-black bg-opacity-75 transition-opacity"} />
-                    </Transition.Child>
+                    </TransitionChild>
 
                     <div className={"fixed inset-0 overflow-y-auto px-3"}>
                         <div className={"flex min-h-full items-center justify-center"}>
-                            <Transition.Child
+                            <TransitionChild
                                 as={Fragment}
                                 enter="ease-out duration-300"
                                 enterFrom="opacity-0 scale-50 transform translate-y-full"
@@ -67,7 +67,7 @@ export default function CreateWorkout() {
                                 leaveFrom="opacity-100 scale-100 transform translate-y-0"
                                 leaveTo="opacity-0 scale-50 transform translate-y-full"
                             >
-                                <Dialog.Panel
+                                <DialogPanel
                                     className={"transform overflow-hidden transition-all w-full px-6 py-12 " +
                                         "bg-background shadow-sm md:max-w-xl flex flex-col gap-y-6"}
                                 >
@@ -96,8 +96,8 @@ export default function CreateWorkout() {
                                             <span className={"text-background"}>Create workout</span>
                                         </button>
                                     </form>
-                                </Dialog.Panel>
-                            </Transition.Child>
+                                </DialogPanel>
+                            </TransitionChild>
                         </div>
                     </div>
                 </Dialog>

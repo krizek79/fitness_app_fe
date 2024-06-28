@@ -6,5 +6,5 @@ export type WorkoutDetailResponse = {
     authorName: string,
     tagResponseList: TagResponse[],
     levelValue: string,
-    description: string
+    description: string | null
 }

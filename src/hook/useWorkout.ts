@@ -12,6 +12,7 @@ import { WorkoutFilterRequest } from "../schema/WorkoutFilterRequest.ts"
 import { WorkoutUpdateRequest } from "../schema/WorkoutUpdateRequest.ts"
 
 export const useFilterWorkouts = (page: number) => {
+    
     const { logout } = useContext(AuthContext)
     const [filterWorkoutsLoading, setFilterWorkoutsLoading] = useState(false)
     const [hasMore, setHasMore] = useState(false)
@@ -33,20 +34,27 @@ export const useFilterWorkouts = (page: number) => {
 
         workoutApi
             .filterWorkouts(request)
-            .then((response: AxiosResponse<PageResponse<WorkoutDetailResponse>>) => {
-                setWorkouts((prevWorkouts) => {
-                    return [
-                        ...new Set([...prevWorkouts, ...response.data.results]),
-                    ]
-                })
-                setHasMore(
-                    calculateHasMore(
-                        response.data.totalElements,
-                        response.data.pageSize,
-                        response.data.pageNumber
+            .then(
+                (
+                    response: AxiosResponse<PageResponse<WorkoutDetailResponse>>
+                ) => {
+                    setWorkouts((prevWorkouts) => {
+                        return [
+                            ...new Set([
+                                ...prevWorkouts,
+                                ...response.data.results,
+                            ]),
+                        ]
+                    })
+                    setHasMore(
+                        calculateHasMore(
+                            response.data.totalElements,
+                            response.data.pageSize,
+                            response.data.pageNumber
+                        )
                     )
-                )
-            })
+                }
+            )
             .catch((error: AxiosError) => {
                 if (error.status === 401) {
                     logout()
@@ -70,6 +78,7 @@ export const useFilterWorkouts = (page: number) => {
 }
 
 export const useGetWorkout = () => {
+
     const { logout } = useContext(AuthContext)
     const [getWorkoutLoading, setGetWorkoutLoading] = useState(false)
     const urlParams = new URLSearchParams(window.location.search)
@@ -98,6 +107,7 @@ export const useGetWorkout = () => {
 }
 
 export const useCreateWorkout = () => {
+
     const { logout } = useContext(AuthContext)
     const [createWorkoutLoading, setCreateWorkoutLoading] = useState(false)
     const navigate = useNavigate()
@@ -134,15 +144,14 @@ export const useCreateWorkout = () => {
 }
 
 export const useUpdateWorkout = () => {
+
     const { logout } = useContext(AuthContext)
     const urlParams = new URLSearchParams(window.location.search)
     const workoutId = urlParams.get("id")
     const [updateWorkoutLoading, setUpdateWorkoutLoading] = useState(false)
     const navigate = useNavigate()
 
-    const updateWorkout = async (
-        request: WorkoutUpdateRequest
-    ) => {
+    const updateWorkout = async (request: WorkoutUpdateRequest) => {
         setUpdateWorkoutLoading(true)
         try {
             const response = await workoutApi.updateWorkout(workoutId, request)

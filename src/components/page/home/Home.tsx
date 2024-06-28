@@ -10,7 +10,6 @@ export default function Home() {
 
     const [page, setPage] = useState(0)
     const { filterWorkoutsLoading, workouts, hasMore } = useFilterWorkouts(page)
-    console.log(workouts)
 
     function handleShowMore() {
         setPage((prevPageNumber: number) => prevPageNumber + 1)
