@@ -1,25 +1,26 @@
-import React, {Fragment, useState} from "react"
-import {Dialog, DialogPanel, Transition, TransitionChild} from "@headlessui/react"
+import React, { Fragment, useState } from "react"
+import {
+    Dialog,
+    DialogPanel,
+    Transition,
+    TransitionChild,
+} from "@headlessui/react"
 import FloatingLabelInput from "../util/FloatingLabelInput.tsx"
-import {useForm} from "react-hook-form"
-import {zodResolver} from "@hookform/resolvers/zod"
-import {signUpRequest, SignUpRequest} from "../../schema/SignUpRequest.ts"
+import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { signUpRequest, SignUpRequest } from "../../schema/SignUpRequest.ts"
 import useSignUp from "../../hook/useSignUp.ts"
 
 export default function SignUp() {
-
-    const {signUp} = useSignUp()
+    const { signUp } = useSignUp()
     const [open, setOpen] = useState(false)
     const {
         register,
         handleSubmit,
-        formState: {
-            errors,
-            isSubmitting
-        },
-        reset
+        formState: { errors, isSubmitting },
+        reset,
     } = useForm<SignUpRequest>({
-        resolver: zodResolver(signUpRequest)
+        resolver: zodResolver(signUpRequest),
     })
 
     function toggleOpen() {
@@ -35,9 +36,11 @@ export default function SignUp() {
         <>
             <button
                 onClick={toggleOpen}
-                className={"flex w-full justify-center gap-x-3 items-center border px-6 py-1.5 " +
+                className={
+                    "flex w-full justify-center gap-x-3 items-center border px-6 py-1.5 " +
                     "transition ease-in-out bg-gradient-to-r from-text to-secondary hover:bg-gradient-to-br " +
-                    "duration-150"}
+                    "duration-150"
+                }
             >
                 <span className={"text-background"}>Create new account</span>
             </button>
@@ -53,11 +56,19 @@ export default function SignUp() {
                         leaveFrom="opacity-100"
                         leaveTo="opacity-0"
                     >
-                        <div className={"fixed inset-0 bg-black bg-opacity-75 transition-opacity"} />
+                        <div
+                            className={
+                                "fixed inset-0 bg-black bg-opacity-75 transition-opacity"
+                            }
+                        />
                     </TransitionChild>
 
                     <div className={"fixed inset-0 overflow-y-auto px-3"}>
-                        <div className={"flex min-h-full items-center justify-center"}>
+                        <div
+                            className={
+                                "flex min-h-full items-center justify-center"
+                            }
+                        >
                             <TransitionChild
                                 as={Fragment}
                                 enter="ease-out duration-300"
@@ -68,14 +79,20 @@ export default function SignUp() {
                                 leaveTo="opacity-0 scale-50 transform translate-y-full"
                             >
                                 <DialogPanel
-                                    className={"transform overflow-hidden transition-all w-full px-6 py-12 " +
-                                        "bg-background shadow-sm md:max-w-xl flex flex-col gap-y-6"}
+                                    className={
+                                        "transform overflow-hidden transition-all w-full px-6 py-12 " +
+                                        "bg-background shadow-sm md:max-w-xl flex flex-col gap-y-6"
+                                    }
                                 >
                                     <form
                                         onSubmit={handleSubmit(onSubmit)}
-                                        className={"w-full flex flex-col gap-y-12"}
+                                        className={
+                                            "w-full flex flex-col gap-y-12"
+                                        }
                                     >
-                                        <div className={"flex flex-col gap-y-6"}>
+                                        <div
+                                            className={"flex flex-col gap-y-6"}
+                                        >
                                             <FloatingLabelInput
                                                 register={register}
                                                 id={"email"}
@@ -105,12 +122,16 @@ export default function SignUp() {
                                         <button
                                             type={"submit"}
                                             disabled={isSubmitting}
-                                            className={"flex w-full justify-center gap-x-3 items-center border px-6 " +
-                                                "py-1.5 rounded transition ease-in-out bg-gradient-to-r from-text " +
+                                            className={
+                                                "flex w-full justify-center gap-x-3 items-center border px-6 " +
+                                                "py-1.5 transition ease-in-out bg-gradient-to-r from-text " +
                                                 "to-secondary hover:bg-gradient-to-br duration-150 " +
-                                                "disabled:opacity-50 disabled:cursor-not-allowed"}
+                                                "disabled:opacity-50 disabled:cursor-not-allowed"
+                                            }
                                         >
-                                            <span className={"text-background"}>Create new account</span>
+                                            <span className={"text-background"}>
+                                                Create new account
+                                            </span>
                                         </button>
                                     </form>
                                 </DialogPanel>

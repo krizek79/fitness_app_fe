@@ -9,9 +9,9 @@ import {
     workoutUpdateRequestSchema,
 } from "../../../schema/WorkoutUpdateRequest"
 import { WorkoutDetailParams } from "./WorkoutDetailProps"
+import CreateTag from "./CreateTag"
 
 export default function WorkoutDetailEditGeneral(props: WorkoutDetailParams) {
-    
     const workout = props.workout
     const { updateWorkout } = useUpdateWorkout()
     const { workoutLevels } = useGetWorkoutLevels()
@@ -58,14 +58,13 @@ export default function WorkoutDetailEditGeneral(props: WorkoutDetailParams) {
         textarea.rows = 1
     }
 
-    const onSubmit = (data: WorkoutUpdateRequest) => {
-        console.log(data)
+    const onSubmitEditGeneral = (data: WorkoutUpdateRequest) => {
         updateWorkout(data)
     }
 
     return (
         <form
-            onSubmit={handleSubmit(onSubmit)}
+            onSubmit={handleSubmit(onSubmitEditGeneral)}
             className={"flex flex-col gap-y-6 w-full"}
         >
             {workout && (
@@ -84,7 +83,7 @@ export default function WorkoutDetailEditGeneral(props: WorkoutDetailParams) {
                         <label className="text-base text-secondary">
                             Level
                         </label>
-                        <ul className="w-full py-1.5 flex flex-wrap flex-col gap-y-1.5 sm:flex-row sm:gap-x-6">
+                        <ul className="w-full pt-1.5 flex flex-wrap flex-col gap-y-1.5 sm:flex-row sm:gap-x-6">
                             {workoutLevels &&
                                 workoutLevels.map((level) => (
                                     <li
@@ -112,6 +111,30 @@ export default function WorkoutDetailEditGeneral(props: WorkoutDetailParams) {
                                 ))}
                         </ul>
                     </div>
+                    <div className="flex flex-col gap-y-1.5">
+                        <span className="text-secondary font-medium">Tags:</span>
+                        <div className={"flex flex-wrap gap-x-3 gap-y-3"}>
+                            <CreateTag />
+                            {workout.tagResponseList.map((tag) => (
+                                <div
+                                    key={tag.id}
+                                    className={
+                                        "flex flex-shrink-0 gap-x-3 px-3 py-1.5 border border-primary text-secondary " +
+                                        "bg-background items-center"
+                                    }
+                                >
+                                    <span className="text-sm">{tag.name}</span>
+                                    <button
+                                        type="button"
+                                        onClick={() => {}}
+                                        className="text-sm font-medium"
+                                    >
+                                        &#10006;
+                                    </button>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
                     <div className="flex flex-col">
                         <label
                             htmlFor="description"
@@ -123,7 +146,7 @@ export default function WorkoutDetailEditGeneral(props: WorkoutDetailParams) {
                             id={"description"}
                             {...register("description")}
                             ref={textareaRef}
-                            defaultValue={workout.description ?? ''}
+                            defaultValue={workout.description ?? ""}
                             className={
                                 "w-full py-1.5 border-b-2 placeholder-transparent focus:outline-none " +
                                 "focus:border-primary bg-background text-gray-500 focus:text-text " +

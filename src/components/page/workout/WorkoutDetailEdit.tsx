@@ -5,6 +5,7 @@ import { useGetWorkout } from "../../../hook/useWorkout"
 import Loading from "../../util/Loading"
 
 export default function WorkoutDetailEdit() {
+    
     const { getWorkoutLoading, workout } = useGetWorkout()
 
     return (
