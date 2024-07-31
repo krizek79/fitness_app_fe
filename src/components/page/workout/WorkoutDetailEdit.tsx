@@ -3,10 +3,12 @@ import { Tab, TabGroup, TabList, TabPanel, TabPanels } from "@headlessui/react"
 import WorkoutDetailEditGeneral from "./WorkoutDetailEditGeneral"
 import { useGetWorkout } from "../../../hook/useWorkout"
 import Loading from "../../util/Loading"
+import { useGetWorkoutLevels } from "../../../hook/useEnum"
 
 export default function WorkoutDetailEdit() {
     
     const { getWorkoutLoading, workout } = useGetWorkout()
+    const { workoutLevels } = useGetWorkoutLevels()
 
     return (
         <>
@@ -43,6 +45,7 @@ export default function WorkoutDetailEdit() {
                                 ) : (
                                     <WorkoutDetailEditGeneral
                                         workout={workout}
+                                        workoutLevels={workoutLevels}
                                     />
                                 )}
                             </TabPanel>

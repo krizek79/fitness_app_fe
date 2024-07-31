@@ -1,7 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useRef, useEffect, ChangeEvent, FocusEvent } from "react"
 import { useForm } from "react-hook-form"
-import { useGetWorkoutLevels } from "../../../hook/useEnum"
 import { useUpdateWorkout } from "../../../hook/useWorkout"
 import BasicLabelInput from "../../util/BasicLabelInput"
 import {
@@ -13,8 +12,8 @@ import CreateTag from "./CreateTag"
 
 export default function WorkoutDetailEditGeneral(props: WorkoutDetailParams) {
     const workout = props.workout
+    const workoutLevels = props.workoutLevels
     const { updateWorkout } = useUpdateWorkout()
-    const { workoutLevels } = useGetWorkoutLevels()
     const textareaRef = useRef<HTMLTextAreaElement>(null)
     const {
         register,
