@@ -169,8 +169,10 @@ export default function CreateTag({ onTagSelect, onClose }: CreateTagProps) {
                                                         key={tag.id}
                                                         onClick={() => {
                                                             onTagSelect(tag)
-                                                            
-                                                            toast.success(`Tag { ${tag.name} } has been added.`)
+                                                            toast.success(
+                                                                `Tag { ${tag.name} } has been added.`
+                                                            )
+                                                            reset()
                                                         }}
                                                         className={
                                                             "py-3 hover:cursor-pointer"

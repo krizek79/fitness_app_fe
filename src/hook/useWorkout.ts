@@ -157,6 +157,7 @@ export const useUpdateWorkout = () => {
             const response = await workoutApi.updateWorkout(workoutId, request)
             if (response.status === 200) {
                 navigate(Paths.WORKOUT + `?id=${response.data.id}`)
+                toast.success("General workout info has been updated.")
             }
         } catch (error) {
             if (error === AxiosError) {
