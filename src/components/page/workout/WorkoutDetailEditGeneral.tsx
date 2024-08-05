@@ -1,5 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useRef, useEffect, ChangeEvent, FocusEvent } from "react"
+import { useRef, useEffect, useState, ChangeEvent, FocusEvent } from "react"
 import { useForm } from "react-hook-form"
 import { useUpdateWorkout } from "../../../hook/useWorkout"
 import BasicLabelInput from "../../util/BasicLabelInput"
@@ -9,6 +9,7 @@ import {
 } from "../../../schema/WorkoutUpdateRequest"
 import { WorkoutDetailParams } from "./WorkoutDetailProps"
 import CreateTag from "./CreateTag"
+import { TagResponse } from "../../../schema/TagResponse"
 
 export default function WorkoutDetailEditGeneral(props: WorkoutDetailParams) {
     const workout = props.workout
@@ -24,6 +25,10 @@ export default function WorkoutDetailEditGeneral(props: WorkoutDetailParams) {
     } = useForm<WorkoutUpdateRequest>({
         resolver: zodResolver(workoutUpdateRequestSchema),
     })
+
+    const [tags, setTags] = useState<TagResponse[]>(
+        workout ? workout.tagResponseList : []
+    )
 
     useEffect(() => {
         if (workout) {
@@ -58,7 +63,21 @@ export default function WorkoutDetailEditGeneral(props: WorkoutDetailParams) {
     }
 
     const onSubmitEditGeneral = (data: WorkoutUpdateRequest) => {
-        updateWorkout(data)
+        updateWorkout({ ...data, tagNames: tags.map((tag) => tag.name) })
+    }
+
+    const handleAddTag = (newTag: TagResponse) => {
+        setTags((prevTags) => {
+            const tagExists = prevTags.some((tag) => tag.id === newTag.id)
+            if (!tagExists) {
+                return [...prevTags, { id: newTag.id, name: newTag.name }]
+            }
+            return prevTags
+        })
+    }
+
+    const handleRemoveTag = (tagId: number) => {
+        setTags((prevTags) => prevTags.filter((tag) => tag.id !== tagId))
     }
 
     return (
@@ -111,21 +130,23 @@ export default function WorkoutDetailEditGeneral(props: WorkoutDetailParams) {
                         </ul>
                     </div>
                     <div className="flex flex-col gap-y-1.5">
-                        <span className="text-secondary font-medium">Tags:</span>
+                        <span className="text-secondary font-medium">
+                            Tags:
+                        </span>
                         <div className={"flex flex-wrap gap-x-3 gap-y-3"}>
-                            <CreateTag />
-                            {workout.tagResponseList.map((tag) => (
+                            <CreateTag
+                                onTagSelect={handleAddTag}
+                                onClose={handleAddTag}
+                            />
+                            {tags.map((tag) => (
                                 <div
                                     key={tag.id}
-                                    className={
-                                        "flex flex-shrink-0 gap-x-3 px-3 py-1.5 border border-primary text-secondary " +
-                                        "bg-background items-center"
-                                    }
+                                    className="flex flex-shrink-0 gap-x-3 px-3 py-1.5 border border-primary text-secondary bg-background items-center"
                                 >
                                     <span className="text-sm">{tag.name}</span>
                                     <button
                                         type="button"
-                                        onClick={() => {}}
+                                        onClick={() => handleRemoveTag(tag.id)}
                                         className="text-sm font-medium"
                                     >
                                         &#10006;

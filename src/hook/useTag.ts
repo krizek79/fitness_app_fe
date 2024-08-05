@@ -33,13 +33,9 @@ export const useFilterTags = (name: string) => {
 
             tagApi
                 .filterTags(request)
-                .then(
-                    (
-                        response: AxiosResponse<PageResponse<TagResponse>>
-                    ) => {
-                        setTags(response.data.results)
-                    }
-                )
+                .then((response: AxiosResponse<PageResponse<TagResponse>>) => {
+                    setTags(response.data.results)
+                })
                 .catch((error: AxiosError) => {
                     if (error.status === 401) {
                         logout()
@@ -60,28 +56,31 @@ export const useCreateTag = () => {
     const { logout } = useContext(AuthContext)
     const [createTagLoading, setCreateTagLoading] = useState(false)
 
-    const createTag = async (request: TagCreateRequest) => {
+    const createTag = async (
+        request: TagCreateRequest
+    ): Promise<TagResponse | null> => {
         setCreateTagLoading(true)
         try {
             const response = await tagApi.createTag(request)
             if (response.status === 200) {
-                //  TODO: add to list
+                const newTag: TagResponse = response.data
+                toast.success(`Tag { ${newTag.name} } has been created.`)
+                return newTag
             }
         } catch (error) {
-            if (error === AxiosError) {
-                if (axios.isAxiosError(error)) {
-                    if (error.response && error.response.status === 401) {
-                        logout()
-                    }
-                    console.log(error)
-                    toast.error("Oops... Something went wrong.")
-                } else {
-                    console.error("An unexpected error occurred:", error)
+            if (axios.isAxiosError(error)) {
+                if (error.response && error.response.status === 401) {
+                    logout()
                 }
+                console.log(error)
+                toast.error("Oops... Something went wrong.")
+            } else {
+                console.error("An unexpected error occurred:", error)
             }
         } finally {
             setCreateTagLoading(false)
         }
+        return null
     }
 
     return { createTagLoading, createTag }

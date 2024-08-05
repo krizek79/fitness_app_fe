@@ -4,7 +4,7 @@ import {
     TransitionChild,
     DialogPanel,
 } from "@headlessui/react"
-import { Fragment, useState } from "react"
+import { Fragment, useState, useEffect } from "react"
 import {
     TagCreateRequest,
     tagCreateRequestSchema,
@@ -12,9 +12,15 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { useCreateTag, useFilterTags } from "../../../hook/useTag"
+import { TagResponse } from "../../../schema/TagResponse"
+import { toast } from "sonner"
 
-export default function CreateTag() {
-    
+interface CreateTagProps {
+    onTagSelect: (tag: TagResponse) => void
+    onClose: (newTag: TagResponse) => void
+}
+
+export default function CreateTag({ onTagSelect, onClose }: CreateTagProps) {
     const [open, setOpen] = useState(false)
     const {
         register,
@@ -33,8 +39,15 @@ export default function CreateTag() {
         setOpen(!open)
     }
 
+    useEffect(() => {
+        reset()
+    }, [open, reset])
+
     async function onSubmit(data: TagCreateRequest) {
-        await createTag(data)
+        const newTag = await createTag(data)
+        if (newTag) {
+            onClose(newTag)
+        }
         reset()
     }
 
@@ -154,6 +167,11 @@ export default function CreateTag() {
                                                 tags.map((tag) => (
                                                     <div
                                                         key={tag.id}
+                                                        onClick={() => {
+                                                            onTagSelect(tag)
+                                                            
+                                                            toast.success(`Tag { ${tag.name} } has been added.`)
+                                                        }}
                                                         className={
                                                             "py-3 hover:cursor-pointer"
                                                         }
