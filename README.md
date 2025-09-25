@@ -5,7 +5,7 @@
 Copy `.env.template` to `.env` in the project root:
 
 ```bash
-  cp .env.template .env
+cp .env.template .env
 ```
 
 * Edit `.env` to provide your local development values.
@@ -14,15 +14,15 @@ Copy `.env.template` to `.env` in the project root:
 ### Running the Expo Project
 #### Install dependencies
 ```bash
-  npm install
+npm install
 ```
 or if you use yarn:
 ```bash
-  yarn install
+yarn install
 ```
 #### Start the Expo development server
 ```bash
-  npx expo start
+npx expo start
 ```
 #### Open the app
 On your phone:
