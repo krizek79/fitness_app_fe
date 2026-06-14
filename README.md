@@ -1,3 +1,5 @@
+[![Backend API](https://img.shields.io/badge/Backend-API-blue)](https://github.com/krizek79/fitness_app_be)
+
 # Fitness App Frontend
 
 ## Local Development
