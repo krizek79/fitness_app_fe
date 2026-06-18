@@ -1,25 +1,25 @@
-import { useEffect } from 'react';
-import { ActivityIndicator, View } from 'react-native';
-import { Stack, useRouter, useSegments } from 'expo-router';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { AuthProvider, useAuth } from '@/src/context/AuthContext';
-import { UserProvider } from '@/src/context/UserContext';
-import { ToastContainer } from '@/src/components/ui/ToastContainer';
+import {useEffect} from 'react';
+import {ActivityIndicator, View} from 'react-native';
+import {Stack, useRouter, useSegments} from 'expo-router';
+import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
+import {AuthProvider, useAuth} from '@/src/context/AuthContext';
+import {UserProvider} from '@/src/context/UserContext';
+import {ToastContainer} from '@/src/components/ui/ToastContainer';
 import './globals.css';
 
 const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      // No retries on network errors — the server is unreachable, not flaky.
-      retry: (failureCount, error) => {
-        if (error instanceof Error && 'response' in error && !(error as any).response) {
-          return false;
-        }
-        return failureCount < 2;
-      },
-      refetchOnWindowFocus: false,
+    defaultOptions: {
+        queries: {
+            // No retries on network errors — the server is unreachable, not flaky.
+            retry: (failureCount, error) => {
+                if (error instanceof Error && 'response' in error && !(error as any).response) {
+                    return false;
+                }
+                return failureCount < 2;
+            },
+            refetchOnWindowFocus: false,
+        },
     },
-  },
 });
 
 /**
@@ -27,48 +27,48 @@ const queryClient = new QueryClient({
  * the app root when authenticated. The /auth/callback route is always reachable
  * so the web OAuth redirect can complete.
  */
-function AuthGate({ children }: { children: React.ReactNode }) {
-  const { isAuthenticated, isLoading } = useAuth();
-  const segments = useSegments();
-  const router = useRouter();
+function AuthGate({children}: { children: React.ReactNode }) {
+    const {isAuthenticated, isLoading} = useAuth();
+    const segments = useSegments();
+    const router = useRouter();
 
-  useEffect(() => {
-    if (isLoading) return;
+    useEffect(() => {
+        if (isLoading) return;
 
-    const firstSegment = segments[0] as string | undefined;
-    const inPublicRoute = firstSegment === '(auth)' || firstSegment === 'auth';
+        const firstSegment = segments[0] as string | undefined;
+        const inPublicRoute = firstSegment === '(auth)' || firstSegment === 'auth';
 
-    if (!isAuthenticated && !inPublicRoute) {
-      router.replace('/login');
-    } else if (isAuthenticated && inPublicRoute) {
-      router.replace('/');
+        if (!isAuthenticated && !inPublicRoute) {
+            router.replace('/login');
+        } else if (isAuthenticated && inPublicRoute) {
+            router.replace('/');
+        }
+    }, [isAuthenticated, isLoading, segments]);
+
+    if (isLoading) {
+        return (
+            <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+                <ActivityIndicator size="large"/>
+            </View>
+        );
     }
-  }, [isAuthenticated, isLoading, segments]);
 
-  if (isLoading) {
-    return (
-      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-        <ActivityIndicator size="large" />
-      </View>
-    );
-  }
-
-  return <>{children}</>;
+    return <>{children}</>;
 }
 
 export default function RootLayout() {
-  return (
-    <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <UserProvider>
-          <View style={{ flex: 1 }}>
-            <AuthGate>
-              <Stack screenOptions={{ headerShown: false }} />
-            </AuthGate>
-            <ToastContainer />
-          </View>
-        </UserProvider>
-      </AuthProvider>
-    </QueryClientProvider>
-  );
+    return (
+        <QueryClientProvider client={queryClient}>
+            <AuthProvider>
+                <UserProvider>
+                    <View style={{flex: 1}}>
+                        <AuthGate>
+                            <Stack screenOptions={{headerShown: false}}/>
+                        </AuthGate>
+                        <ToastContainer/>
+                    </View>
+                </UserProvider>
+            </AuthProvider>
+        </QueryClientProvider>
+    );
 }

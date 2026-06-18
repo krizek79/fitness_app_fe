@@ -11,20 +11,20 @@ let _refreshToken: string | null = null;
 let _onLogout: LogoutFn | null = null;
 
 export const tokenState = {
-  getAccessToken: () => _accessToken,
-  getRefreshToken: () => _refreshToken,
-  set: (accessToken: string, refreshToken: string) => {
-    _accessToken = accessToken;
-    _refreshToken = refreshToken;
-  },
-  clear: () => {
-    _accessToken = null;
-    _refreshToken = null;
-  },
-  registerLogout: (fn: LogoutFn) => {
-    _onLogout = fn;
-  },
-  triggerLogout: () => {
-    _onLogout?.();
-  },
+    getAccessToken: () => _accessToken,
+    getRefreshToken: () => _refreshToken,
+    set: (accessToken: string, refreshToken: string) => {
+        _accessToken = accessToken;
+        _refreshToken = refreshToken;
+    },
+    clear: () => {
+        _accessToken = null;
+        _refreshToken = null;
+    },
+    registerLogout: (fn: LogoutFn) => {
+        _onLogout = fn;
+    },
+    triggerLogout: () => {
+        _onLogout?.();
+    },
 };
