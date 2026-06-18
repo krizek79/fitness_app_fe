@@ -42,7 +42,7 @@
   @media (prefers-color-scheme: dark) {
     :root {
       /* Dark mode */
-      --background:             13  11  9;    /* very dark warm black */
+      --background:             28  25  22;   /* dark warm gray */
       --foreground:             240 238 235;  /* near-white */
 
       --card:                   22  19  16;   /* dark card surface */

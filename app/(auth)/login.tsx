@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import { ActivityIndicator, Platform, Pressable, Text, View } from 'react-native';
+import { Platform, View } from 'react-native';
+import { AntDesign } from '@expo/vector-icons';
 import * as AuthSession from 'expo-auth-session';
 import * as WebBrowser from 'expo-web-browser';
 import { useAuth } from '@/src/context/AuthContext';
@@ -11,12 +12,17 @@ import {
   getRedirectUri,
 } from '@/src/lib/auth/auth';
 import { generateCodeChallenge, generateCodeVerifier } from '@/src/lib/auth/pkce';
+import { Button } from '@/src/components/ui/Button';
+import { Divider } from '@/src/components/ui/Divider';
+import { Heading, Typography } from '@/src/components/ui/Typography';
 
 // Required for expo-auth-session to complete the session on Android/iOS.
 WebBrowser.maybeCompleteAuthSession();
 
 const ISSUER_URI = getIssuerUri();
 const CLIENT_ID = getClientId();
+
+const isWeb = Platform.OS === 'web';
 
 export default function LoginScreen() {
   const { saveTokens } = useAuth();
@@ -39,7 +45,7 @@ export default function LoginScreen() {
 
   // Handle the auth response returned by expo-auth-session (native only).
   useEffect(() => {
-    if (Platform.OS === 'web' || !response) return;
+    if (isWeb || !response) return;
 
     async function handleNativeResponse() {
       if (response?.type !== 'success') {
@@ -74,7 +80,7 @@ export default function LoginScreen() {
 
     const verifier = generateCodeVerifier();
     const challenge = await generateCodeChallenge(verifier);
-    const state = generateCodeVerifier(); // reuse for random state value
+    const state = generateCodeVerifier();
 
     sessionStorage.setItem('pkce_verifier', verifier);
     sessionStorage.setItem('oauth_state', state);
@@ -90,32 +96,57 @@ export default function LoginScreen() {
     promptAsync();
   }
 
-  const handleLogin = Platform.OS === 'web' ? handleWebLogin : handleNativeLogin;
+  const handleLogin = isWeb ? handleWebLogin : handleNativeLogin;
 
-  return (
-    <View className="flex-1 items-center justify-center bg-background px-8">
-      <View className="mb-16 items-center">
-        <Text className="text-4xl font-bold text-primary">Fitness App</Text>
-        <Text className="mt-2 text-base text-muted-foreground">Track your progress</Text>
+  // ─── Shared login card content ───────────────────────────────────────────────
+
+  const content = (
+    <>
+      <View className="mb-8 items-center gap-2">
+        <Heading level="h1">Fitness App</Heading>
       </View>
 
-      <Pressable
-        onPress={handleLogin}
-        disabled={isLoading || (Platform.OS !== 'web' && !request)}
-        className="w-full flex-row items-center justify-center gap-3 rounded-xl border border-border bg-card px-6 py-4 active:opacity-70 disabled:opacity-40"
-      >
-        {isLoading ? (
-          <ActivityIndicator size="small" />
-        ) : (
-          <Text className="text-base font-semibold text-card-foreground">
-            Continue with Google
-          </Text>
-        )}
-      </Pressable>
+      <Divider label="Sign in to continue" />
 
-      {error && (
-        <Text className="mt-4 text-center text-sm text-destructive">{error}</Text>
-      )}
+      <View className="mt-6 gap-3">
+        <Button
+          label="Continue with Google"
+          onPress={handleLogin}
+          variant="ghost"
+          loading={isLoading}
+          disabled={!isWeb && !request}
+          icon={<AntDesign name="google" size={20} color="#4285F4" />}
+        />
+
+        {error && (
+          <Typography variant="muted" className="text-center text-destructive">
+            {error}
+          </Typography>
+        )}
+      </View>
+    </>
+  );
+
+  // ─── Web: centered card layout ───────────────────────────────────────────────
+
+  if (isWeb) {
+    return (
+      <View className="flex-1 items-center justify-center bg-background px-4">
+        <View className="w-full max-w-sm rounded-2xl border border-border bg-card p-8">
+          {content}
+        </View>
+        <Typography variant="muted" className="mt-6 text-center text-xs">
+          By continuing, you agree to our Terms of Service and Privacy Policy.
+        </Typography>
+      </View>
+    );
+  }
+
+  // ─── Native: full-screen layout ──────────────────────────────────────────────
+
+  return (
+    <View className="flex-1 justify-center bg-background px-8">
+      {content}
     </View>
   );
 }
