@@ -1,3 +1,74 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* ─── Design tokens ────────────────────────────────────────────────────────────
+   All values are bare RGB triplets so Tailwind's opacity modifier works:
+     bg-background/80  →  rgba(var(--background), 0.8)
+   ─────────────────────────────────────────────────────────────────────────── */
+
+@layer base {
+  :root {
+    /* Light mode */
+    --background:             247 247 247;   /* near-white, slightly warm */
+    --foreground:             15  12  10;    /* near-black */
+
+    --card:                   255 255 255;
+    --card-foreground:        15  12  10;
+
+    --muted:                  235 234 231;   /* light gray surface */
+    --muted-foreground:       115 107 99;    /* medium gray text */
+
+    --secondary:              235 234 231;
+    --secondary-foreground:   25  22  18;
+
+    --primary:                250 204 21;    /* yellow-400 */
+    --primary-foreground:     15  12  10;    /* near-black on yellow */
+
+    --accent:                 250 204 21;    /* mirrors primary */
+    --accent-foreground:      15  12  10;
+
+    --border:                 224 222 218;
+    --input:                  224 222 218;
+    --ring:                   250 204 21;    /* focus ring = primary */
+
+    --destructive:            239 68  68;    /* red-500 */
+    --destructive-foreground: 250 250 250;
+
+    --success:                34  197 94;    /* green-500 */
+    --success-foreground:     250 250 250;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      /* Dark mode */
+      --background:             13  11  9;    /* very dark warm black */
+      --foreground:             240 238 235;  /* near-white */
+
+      --card:                   22  19  16;   /* dark card surface */
+      --card-foreground:        240 238 235;
+
+      --muted:                  37  33  28;   /* subtle dark surface */
+      --muted-foreground:       140 133 124;  /* muted text */
+
+      --secondary:              37  33  28;
+      --secondary-foreground:   240 238 235;
+
+      --primary:                250 204 21;    /* yellow-400 — same as light mode */
+      --primary-foreground:     15  12  10;
+
+      --accent:                 250 204 21;
+      --accent-foreground:      15  12  10;
+
+      --border:                 45  41  35;
+      --input:                  45  41  35;
+      --ring:                   250 204 21;
+
+      --destructive:            220 38  38;   /* red-600 (slightly less vivid) */
+      --destructive-foreground: 250 250 250;
+
+      --success:                22  163 74;   /* green-600 */
+      --success-foreground:     250 250 250;
+    }
+  }
+}

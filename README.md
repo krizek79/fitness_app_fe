@@ -14,6 +14,9 @@ cp .env.template .env
 * The `.env` file is excluded from version control (via `.gitignore`) to keep sensitive data safe.
 
 ### Running the Expo Project
+
+Before running locally, it's required to be a part of Expo development group.
+
 #### Install dependencies
 ```bash
 npm install
@@ -22,9 +25,14 @@ or if you use yarn:
 ```bash
 yarn install
 ```
+#### Login to Expo
+```bash
+npx expo login --sso
+```
+
 #### Start the Expo development server
 ```bash
-npx expo start
+npx expo start --tunnel
 ```
 #### Open the app
 On your phone:
