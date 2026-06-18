@@ -1,8 +1,8 @@
 import axios, { AxiosError, AxiosRequestConfig, AxiosResponse, InternalAxiosRequestConfig } from 'axios';
 import { Platform } from 'react-native';
-import { tokenState } from '@/src/lib/tokenState';
-import { tokenStorage } from '@/src/lib/tokenStorage';
-import { refreshTokens } from '@/src/lib/auth';
+import { tokenState } from '@/src/lib/auth/tokenState';
+import { tokenStorage } from '@/src/lib/auth/tokenStorage';
+import { refreshTokens } from '@/src/lib/auth/auth';
 import { parseApiError } from '@/src/lib/apiError';
 import { toast } from '@/src/lib/toast';
 

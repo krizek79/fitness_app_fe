@@ -9,8 +9,8 @@ import {
   getClientId,
   getIssuerUri,
   getRedirectUri,
-} from '@/src/lib/auth';
-import { generateCodeChallenge, generateCodeVerifier } from '@/src/lib/pkce';
+} from '@/src/lib/auth/auth';
+import { generateCodeChallenge, generateCodeVerifier } from '@/src/lib/auth/pkce';
 
 // Required for expo-auth-session to complete the session on Android/iOS.
 WebBrowser.maybeCompleteAuthSession();

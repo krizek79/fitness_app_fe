@@ -36,7 +36,7 @@ function AuthGate({ children }: { children: React.ReactNode }) {
     if (isLoading) return;
 
     const firstSegment = segments[0] as string | undefined;
-    const inPublicRoute = firstSegment === 'login' || firstSegment === 'auth';
+    const inPublicRoute = firstSegment === '(auth)' || firstSegment === 'auth';
 
     if (!isAuthenticated && !inPublicRoute) {
       router.replace('/login');

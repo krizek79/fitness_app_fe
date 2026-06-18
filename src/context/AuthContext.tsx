@@ -1,7 +1,7 @@
 import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
-import { tokenStorage } from '@/src/lib/tokenStorage';
-import { tokenState } from '@/src/lib/tokenState';
-import { AuthUser, decodeUser, isTokenExpired, refreshTokens, revokeSession } from '@/src/lib/auth';
+import { tokenStorage } from '@/src/lib/auth/tokenStorage';
+import { tokenState } from '@/src/lib/auth/tokenState';
+import { AuthUser, decodeUser, isTokenExpired, refreshTokens, revokeSession } from '@/src/lib/auth/auth';
 
 interface AuthContextValue {
   user: AuthUser | null;

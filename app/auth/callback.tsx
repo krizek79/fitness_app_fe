@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react';
 import { ActivityIndicator, Platform, Text, View } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useAuth } from '@/src/context/AuthContext';
-import { exchangeCodeForTokens } from '@/src/lib/auth';
+import { exchangeCodeForTokens } from '@/src/lib/auth/auth';
 
 /**
  * Web-only screen. Keycloak redirects here after Google login with
