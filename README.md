@@ -1,6 +1,14 @@
 [![Backend API](https://img.shields.io/badge/Backend-API-blue)](https://github.com/krizek79/fitness_app_be)
+[![Web App](https://img.shields.io/badge/Web-Live-green)](https://fitness-app-fe-0v0o.onrender.com)
 
 # Fitness App Frontend
+
+## Web Version
+
+A web build is deployed and publicly accessible at:
+**[https://fitness-app-fe-0v0o.onrender.com](https://fitness-app-fe-0v0o.onrender.com)**
+
+Deployments are automated — every push to `main` that passes CI is built and deployed automatically via GitHub Actions.
 
 ## Local Development
 ### Environment
