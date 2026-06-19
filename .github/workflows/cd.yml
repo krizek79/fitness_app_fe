@@ -41,3 +41,6 @@ jobs:
           git add -f dist/
           git commit -m "deploy: $(date -u '+%Y-%m-%d %H:%M:%S UTC')"
           git push origin HEAD:deploy/web --force
+
+      - name: Trigger Render deploy
+        run: curl -X POST "${{ secrets.RENDER_DEPLOY_HOOK_URL }}"
