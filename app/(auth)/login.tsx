@@ -102,8 +102,10 @@ export default function LoginScreen() {
 
     const content = (
         <>
-            <View className="mb-8 items-center gap-2">
-                <Heading level="h1">Fitness App</Heading>
+            <View className="mb-8 items-center">
+                <Heading level="h1" className="text-center">
+                    Welcome to <Heading level="h1" className="text-primary">Fitness App</Heading>
+                </Heading>
             </View>
 
             <Divider label="Sign in to continue"/>
@@ -132,7 +134,7 @@ export default function LoginScreen() {
     if (isWeb) {
         return (
             <View className="flex-1 items-center justify-center bg-background px-4">
-                <View className="w-full max-w-sm rounded-2xl border border-border bg-card p-8">
+                <View className="w-full max-w-md rounded-2xl border border-border bg-card p-8">
                     {content}
                 </View>
                 <Typography variant="muted" className="mt-6 text-center text-xs">
@@ -147,6 +149,9 @@ export default function LoginScreen() {
     return (
         <View className="flex-1 justify-center bg-background px-8">
             {content}
+            <Typography variant="muted" className="mt-6 text-center text-xs">
+                By continuing, you agree to our Terms of Service and Privacy Policy.
+            </Typography>
         </View>
     );
 }

@@ -55,7 +55,7 @@ export default function AuthCallbackScreen() {
             try {
                 const tokens = await exchangeCodeForTokens(code, verifier ?? '');
                 await saveTokens(tokens.access_token, tokens.refresh_token);
-                router.replace('/');
+                router.replace('/home');
             } catch (err) {
                 console.error('Token exchange failed:', err);
                 router.replace('/login');

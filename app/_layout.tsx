@@ -41,7 +41,7 @@ function AuthGate({children}: { children: React.ReactNode }) {
         if (!isAuthenticated && !inPublicRoute) {
             router.replace('/login');
         } else if (isAuthenticated && inPublicRoute) {
-            router.replace('/');
+            router.replace('/home');
         }
     }, [isAuthenticated, isLoading, segments]);
 

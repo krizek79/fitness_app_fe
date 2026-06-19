@@ -1,4 +1,4 @@
-import {toastEmitter, ToastType} from '@/src/lib/toastEmitter';
+import {toastEmitter, ToastType} from './emitter';
 
 /**
  * Keys of toasts currently visible or queued. Prevents duplicate toasts for

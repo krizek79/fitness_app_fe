@@ -3,7 +3,7 @@ import {Platform} from 'react-native';
 import {tokenState} from '@/src/lib/auth/tokenState';
 import {tokenStorage} from '@/src/lib/auth/tokenStorage';
 import {refreshTokens} from '@/src/lib/auth/auth';
-import {parseApiError} from '@/src/lib/apiError';
+import {parseApiError} from '@/src/lib/api/error';
 import {toast} from '@/src/lib/toast';
 
 const getBaseUrl = () => {

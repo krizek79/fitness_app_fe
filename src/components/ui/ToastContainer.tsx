@@ -1,7 +1,7 @@
 import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {Animated, Text, View} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {toastEmitter, ToastEvent, ToastType} from '@/src/lib/toastEmitter';
+import {toastEmitter, ToastEvent, ToastType} from '@/src/lib/toast/emitter';
 
 // ─── Design tokens ────────────────────────────────────────────────────────────
 
