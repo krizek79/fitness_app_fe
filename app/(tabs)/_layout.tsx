@@ -32,9 +32,9 @@ export default function TabLayout() {
     const sidebarRef = useRef<SidebarRef>(null);
     const {width: windowWidth} = useWindowDimensions();
     const isMobileWeb = windowWidth < 768;
+    const pathname = usePathname();
 
     if (Platform.OS === 'web') {
-        const pathname = usePathname();
         const currentTab = TABS.find(
             tab => pathname === `/${tab.name}` || pathname.startsWith(`/${tab.name}/`),
         );
