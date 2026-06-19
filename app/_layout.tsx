@@ -1,6 +1,8 @@
 import {useEffect} from 'react';
 import {ActivityIndicator, View} from 'react-native';
 import {Stack, useRouter, useSegments} from 'expo-router';
+import {useColorScheme} from 'nativewind';
+import {themeColors} from '@/src/constants/colors';
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
 import {AuthProvider, useAuth} from '@/src/context/AuthContext';
 import {UserProvider} from '@/src/context/UserContext';
@@ -29,6 +31,8 @@ const queryClient = new QueryClient({
  */
 function AuthGate({children}: { children: React.ReactNode }) {
     const {isAuthenticated, isLoading} = useAuth();
+    const {colorScheme} = useColorScheme();
+    const palette = themeColors[colorScheme ?? 'light'];
     const segments = useSegments();
     const router = useRouter();
 
@@ -48,7 +52,7 @@ function AuthGate({children}: { children: React.ReactNode }) {
     if (isLoading) {
         return (
             <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
-                <ActivityIndicator size="large"/>
+                <ActivityIndicator size="large" color={palette.primary}/>
             </View>
         );
     }

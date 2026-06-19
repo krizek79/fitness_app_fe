@@ -4,11 +4,14 @@
  * Fitness App API
  * Comprehensive API for fitness application with support for workout plans, exercises, and progress tracking. API provides OAuth2 authentication via Keycloak or JWT tokens.
  */
+import zod from 'zod';
 
-export interface WeekInputRequest {
-  /** Should be set only for update. For new object, this field should be null. */
-  id?: number;
-  /** @minimum 1 */
-  order: number;
-  note?: string;
-}
+
+/**
+ * Returns a list of desired reference data.
+ * @summary Get reference data by type
+ */
+export const getReferenceDataParams = zod.object({
+  "type": zod.string()
+})
+

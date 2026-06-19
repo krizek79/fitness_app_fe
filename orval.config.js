@@ -15,8 +15,17 @@ module.exports = {
                     path: 'src/api/axios-instance.ts',
                     name: 'customInstance',
                 },
-                zod: true,
             },
+        },
+    },
+    fitnessApiZod: {
+        input: {
+            target: process.env.OPENAPI_URL || 'http://localhost:8080/v3/api-docs',
+        },
+        output: {
+            mode: 'tags-split',
+            target: 'src/api/generated/zod/fitness.ts',
+            client: 'zod',
         },
     },
 };

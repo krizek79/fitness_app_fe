@@ -6,6 +6,7 @@ import {useCurrentUser} from '@/src/context/UserContext';
 import {useGetProfileById} from '@/src/api/generated/profile/profile';
 import {Avatar} from '@/src/components/ui/Avatar';
 import {Button} from '@/src/components/ui/Button';
+import {Skeleton, SkeletonGroup} from '@/src/components/ui/Skeleton';
 import {Heading, Typography} from '@/src/components/ui/Typography';
 import {themeColors} from '@/src/constants/colors';
 
@@ -40,29 +41,49 @@ export default function ProfileScreen() {
                 headerShadowVisible: false,
             }}/>
 
-            <View className="items-center gap-3 pb-8">
-                <Avatar name={name} imageUrl={imageUrl} size="lg"/>
-                {name && <Heading level="h3">{name}</Heading>}
-            </View>
-
-            <View className="rounded-xl bg-card overflow-hidden">
-                {infoRows.map((row, index) => (
-                    <View
-                        key={row.label}
-                        className={`flex-row justify-between items-center px-4 py-3 ${index < infoRows.length - 1 ? 'border-b border-border' : ''}`}
-                    >
-                        <Typography variant="muted">{row.label}</Typography>
-                        <Typography variant="body-sm">{row.value}</Typography>
+            {isLoading ? (
+                <>
+                    <View className="items-center gap-3 pb-8">
+                        <Skeleton width={80} height={80} rounded="full" />
+                        <Skeleton width={140} height={22} rounded="md" />
                     </View>
-                ))}
-            </View>
+                    <View className="rounded-xl bg-card overflow-hidden px-4">
+                        <SkeletonGroup gap={0}>
+                            <View className="py-3 border-b border-border">
+                                <Skeleton width="60%" height={16} rounded="md" />
+                            </View>
+                            <View className="py-3">
+                                <Skeleton width="40%" height={16} rounded="md" />
+                            </View>
+                        </SkeletonGroup>
+                    </View>
+                </>
+            ) : (
+                <>
+                    <View className="items-center gap-3 pb-8">
+                        <Avatar name={name} imageUrl={imageUrl} size="lg"/>
+                        {name && <Heading level="h3">{name}</Heading>}
+                    </View>
+
+                    <View className="rounded-xl bg-card overflow-hidden">
+                        {infoRows.map((row, index) => (
+                            <View
+                                key={row.label}
+                                className={`flex-row justify-between items-center px-4 py-3 ${index < infoRows.length - 1 ? 'border-b border-border' : ''}`}
+                            >
+                                <Typography variant="muted">{row.label}</Typography>
+                                <Typography variant="body-sm">{row.value}</Typography>
+                            </View>
+                        ))}
+                    </View>
+                </>
+            )}
 
             <View className="mt-auto pb-10">
                 <Button
                     label="Log out"
                     onPress={logout}
                     variant="destructive"
-                    loading={isLoading}
                 />
             </View>
         </View>

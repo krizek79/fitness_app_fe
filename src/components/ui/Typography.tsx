@@ -1,7 +1,7 @@
 import {Text, TextProps} from 'react-native';
 import {cn} from '@/src/lib/utils';
 
-type HeadingLevel = 'h1' | 'h2' | 'h3' | 'h4';
+type HeadingLevel = 'h1' | 'h2' | 'h3' | 'h4' | 'h5';
 type TextVariant = 'body' | 'body-sm' | 'caption' | 'muted';
 
 interface HeadingProps extends TextProps {
@@ -17,6 +17,7 @@ const headingStyles: Record<HeadingLevel, string> = {
     h2: 'text-2xl font-bold text-foreground',
     h3: 'text-xl font-semibold text-foreground',
     h4: 'text-lg font-semibold text-foreground',
+    h5: 'text-base font-semibold text-foreground',
 };
 
 const textStyles: Record<TextVariant, string> = {
