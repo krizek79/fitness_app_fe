@@ -19,13 +19,6 @@ export const TABS: TabConfig[] = [
         iconActive: 'home',
     },
     {
-        name: 'workouts',
-        href: '/workouts',
-        label: 'Workouts',
-        icon: 'barbell-outline',
-        iconActive: 'barbell',
-    },
-    {
         name: 'plans',
         href: '/plans',
         label: 'Plans',

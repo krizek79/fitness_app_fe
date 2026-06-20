@@ -1,4 +1,4 @@
-import {useEffect, useState} from 'react';
+﻿import {useEffect, useState} from 'react';
 import {Platform, View} from 'react-native';
 import {AntDesign} from '@expo/vector-icons';
 import * as AuthSession from 'expo-auth-session';
@@ -12,9 +12,9 @@ import {
     getRedirectUri,
 } from '@/src/lib/auth/auth';
 import {generateCodeChallenge, generateCodeVerifier} from '@/src/lib/auth/pkce';
-import {Button} from '@/src/components/ui/Button';
-import {Divider} from '@/src/components/ui/Divider';
-import {Heading, Typography} from '@/src/components/ui/Typography';
+import {Button} from '@/src/components/primitives/Button';
+import {Divider} from '@/src/components/primitives/Divider';
+import {Heading, Typography} from '@/src/components/primitives/Typography';
 
 // Required for expo-auth-session to complete the session on Android/iOS.
 WebBrowser.maybeCompleteAuthSession();
@@ -29,7 +29,7 @@ export default function LoginScreen() {
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
-    // ─── Native: PKCE auth request via expo-auth-session ────────────────────────
+    // â”€â”€â”€ Native: PKCE auth request via expo-auth-session â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     const discovery = AuthSession.useAutoDiscovery(ISSUER_URI);
 
@@ -72,7 +72,7 @@ export default function LoginScreen() {
         handleNativeResponse();
     }, [response]);
 
-    // ─── Web: PKCE redirect (no popup) ──────────────────────────────────────────
+    // â”€â”€â”€ Web: PKCE redirect (no popup) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     async function handleWebLogin() {
         setIsLoading(true);
@@ -88,7 +88,7 @@ export default function LoginScreen() {
         window.location.href = buildWebAuthUrl(challenge, state);
     }
 
-    // ─── Native login trigger ────────────────────────────────────────────────────
+    // â”€â”€â”€ Native login trigger â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     function handleNativeLogin() {
         setIsLoading(true);
@@ -98,7 +98,7 @@ export default function LoginScreen() {
 
     const handleLogin = isWeb ? handleWebLogin : handleNativeLogin;
 
-    // ─── Shared login card content ───────────────────────────────────────────────
+    // â”€â”€â”€ Shared login card content â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     const content = (
         <>
@@ -129,7 +129,7 @@ export default function LoginScreen() {
         </>
     );
 
-    // ─── Web: centered card layout ───────────────────────────────────────────────
+    // â”€â”€â”€ Web: centered card layout â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     if (isWeb) {
         return (
@@ -144,7 +144,7 @@ export default function LoginScreen() {
         );
     }
 
-    // ─── Native: full-screen layout ──────────────────────────────────────────────
+    // â”€â”€â”€ Native: full-screen layout â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     return (
         <View className="flex-1 justify-center bg-background px-8">

@@ -1,13 +1,13 @@
-import {View} from 'react-native';
-import {Stack} from 'expo-router';
+﻿import {Platform, RefreshControl, ScrollView, View} from 'react-native';
 import {useColorScheme} from 'nativewind';
 import {useAuth} from '@/src/context/AuthContext';
 import {useCurrentUser} from '@/src/context/UserContext';
 import {useGetProfileById} from '@/src/api/generated/profile/profile';
-import {Avatar} from '@/src/components/ui/Avatar';
-import {Button} from '@/src/components/ui/Button';
-import {Skeleton, SkeletonGroup} from '@/src/components/ui/Skeleton';
-import {Heading, Typography} from '@/src/components/ui/Typography';
+import {Avatar} from '@/src/components/primitives/Avatar';
+import {Button} from '@/src/components/primitives/Button';
+import {Skeleton, SkeletonGroup} from '@/src/components/primitives/Skeleton';
+import {Heading, Typography} from '@/src/components/primitives/Typography';
+import {DetailLayout, webContentStyle} from '@/src/components/primitives/DetailLayout';
 import {themeColors} from '@/src/constants/colors';
 
 export default function ProfileScreen() {
@@ -17,7 +17,7 @@ export default function ProfileScreen() {
     const palette = themeColors[colorScheme ?? 'light'];
 
     const profileId = currentUser?.profile?.id;
-    const {data: profile, isLoading} = useGetProfileById(profileId!, {
+    const {data: profile, isLoading, refetch, isRefetching} = useGetProfileById(profileId!, {
         query: {enabled: !!profileId},
     });
 
@@ -32,14 +32,14 @@ export default function ProfileScreen() {
     ].filter(row => row.value);
 
     return (
-        <View className="flex-1 bg-background px-6 pt-6">
-            <Stack.Screen options={{
-                headerShown: true,
-                title: 'Profile',
-                headerStyle: {backgroundColor: palette.card},
-                headerTintColor: palette.mutedForeground,
-                headerShadowVisible: false,
-            }}/>
+        <DetailLayout title="Profile">
+        <ScrollView
+            className="flex-1 bg-background"
+            contentContainerStyle={{flexGrow: 1, paddingHorizontal: 24, paddingTop: 24, ...webContentStyle}}
+            refreshControl={Platform.OS !== 'web' ? (
+                <RefreshControl refreshing={isRefetching} onRefresh={refetch} tintColor={palette.primary}/>
+            ) : undefined}
+        >
 
             {isLoading ? (
                 <>
@@ -86,6 +86,7 @@ export default function ProfileScreen() {
                     variant="destructive"
                 />
             </View>
-        </View>
+        </ScrollView>
+        </DetailLayout>
     );
 }

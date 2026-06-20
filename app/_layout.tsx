@@ -1,4 +1,4 @@
-import {useEffect} from 'react';
+﻿import {useEffect} from 'react';
 import {ActivityIndicator, View} from 'react-native';
 import {Stack, useRouter, useSegments} from 'expo-router';
 import {useColorScheme} from 'nativewind';
@@ -6,13 +6,13 @@ import {themeColors} from '@/src/constants/colors';
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
 import {AuthProvider, useAuth} from '@/src/context/AuthContext';
 import {UserProvider} from '@/src/context/UserContext';
-import {ToastContainer} from '@/src/components/ui/ToastContainer';
+import {ToastContainer} from '@/src/components/primitives/ToastContainer';
 import './globals.css';
 
 const queryClient = new QueryClient({
     defaultOptions: {
         queries: {
-            // No retries on network errors — the server is unreachable, not flaky.
+            // No retries on network errors â€” the server is unreachable, not flaky.
             retry: (failureCount, error) => {
                 if (error instanceof Error && 'response' in error && !(error as any).response) {
                     return false;

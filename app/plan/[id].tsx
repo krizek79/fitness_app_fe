@@ -1,13 +1,13 @@
-import {View, ScrollView} from 'react-native';
-import {useLocalSearchParams} from 'expo-router';
-import {Stack} from 'expo-router';
+import {Alert, Platform, Pressable, RefreshControl, ScrollView, View} from 'react-native';
+import {useLocalSearchParams, useRouter} from 'expo-router';
 import {Ionicons} from '@expo/vector-icons';
 import {useColorScheme} from 'nativewind';
-import {useGetPlanById} from '@/src/api/generated/plan/plan';
+import {useGetPlanById, useDeletePlan} from '@/src/api/generated/plan/plan';
 import type {WeekSimpleResponse} from '@/src/api/generated/model';
-import {Heading, Typography} from '@/src/components/ui/Typography';
-import {Skeleton, SkeletonGroup} from '@/src/components/ui/Skeleton';
-import {Card} from '@/src/components/ui/Card';
+import {Heading, Typography} from '@/src/components/primitives/Typography';
+import {Skeleton, SkeletonGroup} from '@/src/components/primitives/Skeleton';
+import {Card} from '@/src/components/primitives/Card';
+import {DetailLayout, webContentStyle} from '@/src/components/primitives/DetailLayout';
 import {themeColors} from '@/src/constants/colors';
 
 function PlanDetailSkeleton() {
@@ -67,22 +67,62 @@ function WeekCard({week}: {week: WeekSimpleResponse}) {
 
 export default function PlanDetailScreen() {
     const {id} = useLocalSearchParams<{id: string}>();
+    const router = useRouter();
     const {colorScheme} = useColorScheme();
     const palette = themeColors[colorScheme ?? 'light'];
 
-    const {data: plan, isLoading} = useGetPlanById(Number(id));
+    const {data: plan, isLoading, refetch, isRefetching} = useGetPlanById(Number(id));
+    const {mutate: deletePlan, isPending: isDeleting} = useDeletePlan();
+
+    function handleDelete() {
+        Alert.alert(
+            'Delete plan',
+            `Are you sure you want to delete "${plan?.title ?? 'this plan'}"? This cannot be undone.`,
+            [
+                {text: 'Cancel', style: 'cancel'},
+                {
+                    text: 'Delete',
+                    style: 'destructive',
+                    onPress: () => deletePlan(
+                        {id: Number(id)},
+                        {onSuccess: () => router.replace('/(tabs)/plans')},
+                    ),
+                },
+            ],
+        );
+    }
+
+    const headerRight = !isLoading && (
+        <View className="flex-row items-center" style={{gap: 24}}>
+            <Pressable
+                onPress={() => router.push({pathname: '/plan/edit/[id]', params: {id}})}
+                accessibilityLabel="Edit plan"
+                style={{padding: 8}}
+            >
+                <Ionicons name="pencil-outline" size={20} color={palette.mutedForeground}/>
+            </Pressable>
+            <Pressable
+                onPress={handleDelete}
+                disabled={isDeleting}
+                accessibilityLabel="Delete plan"
+                style={{padding: 8, opacity: isDeleting ? 0.4 : 1}}
+            >
+                <Ionicons name="trash-outline" size={20} color={palette.destructive}/>
+            </Pressable>
+        </View>
+    );
 
     return (
-        <View className="flex-1 bg-background">
-            <Stack.Screen options={{
-                headerShown: true,
-                title: isLoading ? 'Loading…' : (plan?.title ?? 'Plan'),
-                headerStyle: {backgroundColor: palette.card},
-                headerTintColor: palette.mutedForeground,
-                headerShadowVisible: false,
-            }}/>
-
-            <ScrollView contentContainerStyle={{padding: 24, gap: 16}}>
+        <DetailLayout
+            title={isLoading ? 'Loading…' : (plan?.title ?? 'Plan')}
+            headerRight={headerRight || undefined}
+        >
+            <ScrollView
+                contentContainerStyle={{padding: 24, gap: 16, ...webContentStyle}}
+                refreshControl={Platform.OS !== 'web' ? (
+                    <RefreshControl refreshing={isRefetching} onRefresh={refetch} tintColor={palette.primary}/>
+                ) : undefined}
+            >
                 {isLoading ? (
                     <PlanDetailSkeleton/>
                 ) : (
@@ -126,6 +166,6 @@ export default function PlanDetailScreen() {
                     </>
                 )}
             </ScrollView>
-        </View>
+        </DetailLayout>
     );
 }

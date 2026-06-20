@@ -1,4 +1,5 @@
-import {Image, View} from 'react-native';
+import {useState} from 'react';
+import {Image, Platform, View} from 'react-native';
 import {cn} from '@/src/lib/utils';
 import {Typography} from './Typography';
 
@@ -29,13 +30,32 @@ function getInitials(name: string): string {
 
 export function Avatar({name, imageUrl, size = 'md', className}: AvatarProps) {
     const s = sizeStyles[size];
+    const [imgError, setImgError] = useState(false);
 
-    if (imageUrl) {
+    if (imageUrl && !imgError) {
+        if (Platform.OS === 'web') {
+            return (
+                // @ts-ignore — referrerPolicy is a valid HTML img attribute on web
+                <img
+                    src={imageUrl}
+                    referrerPolicy="no-referrer"
+                    onError={() => setImgError(true)}
+                    style={{
+                        width: s.px,
+                        height: s.px,
+                        borderRadius: s.px / 2,
+                        objectFit: 'cover',
+                    }}
+                />
+            );
+        }
+
         return (
             <Image
                 source={{uri: imageUrl}}
-                className={cn('rounded-full', s.container, className)}
                 style={{width: s.px, height: s.px, borderRadius: s.px / 2}}
+                resizeMode="cover"
+                onError={() => setImgError(true)}
             />
         );
     }

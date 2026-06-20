@@ -1,7 +1,10 @@
-import {View} from 'react-native';
+﻿import {View} from 'react-native';
+import {Ionicons} from '@expo/vector-icons';
 import type {PlanSimpleResponse} from '@/src/api/generated/model';
-import {Card} from './Card';
-import {Typography} from './Typography';
+import {Card} from '@/src/components/primitives/Card';
+import {Typography} from '@/src/components/primitives/Typography';
+import {useColorScheme} from 'nativewind';
+import {themeColors} from '@/src/constants/colors';
 
 interface PlanCardProps {
     plan: PlanSimpleResponse;
@@ -10,6 +13,8 @@ interface PlanCardProps {
 
 export function PlanCard({plan, onPress}: PlanCardProps) {
     const {title, author, trainee, numberOfWeeks, numberOfCompletedWeeks} = plan;
+    const {colorScheme} = useColorScheme();
+    const palette = themeColors[colorScheme ?? 'light'];
 
     const completed = numberOfCompletedWeeks ?? 0;
     const total = numberOfWeeks ?? 0;
@@ -17,9 +22,12 @@ export function PlanCard({plan, onPress}: PlanCardProps) {
 
     return (
         <Card onPress={onPress} padding="md" className="gap-2">
-            <Typography variant="body" className="text-foreground font-semibold" numberOfLines={2}>
-                {title ?? 'Untitled plan'}
-            </Typography>
+            <View className="flex-row items-center justify-between gap-2">
+                <Typography variant="body" className="text-foreground font-semibold flex-1" numberOfLines={2}>
+                    {title ?? 'Untitled plan'}
+                </Typography>
+                {onPress && <Ionicons name="chevron-forward" size={18} color={palette.mutedForeground} />}
+            </View>
 
             <View className="flex-row gap-4">
                 {author?.name && (

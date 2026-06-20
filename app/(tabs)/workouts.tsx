@@ -1,5 +1,5 @@
-import {View} from 'react-native';
-import {Heading} from '@/src/components/ui/Typography';
+﻿import {View} from 'react-native';
+import {Heading} from '@/src/components/primitives/Typography';
 
 export default function WorkoutsScreen() {
     return (

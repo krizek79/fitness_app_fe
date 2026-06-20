@@ -7,6 +7,36 @@
      bg-background/80  →  rgba(var(--background), 0.8)
    ─────────────────────────────────────────────────────────────────────────── */
 
+/* ─── Custom scrollbar (web only) ──────────────────────────────────────────── */
+
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgb(var(--muted-foreground) / 0.3);
+    border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: rgb(var(--muted-foreground) / 0.55);
+}
+
+* {
+    scrollbar-width: thin;
+    scrollbar-color: rgb(var(--muted-foreground) / 0.3) transparent;
+}
+
+/* ─── Design tokens ────────────────────────────────────────────────────────────
+   All values are bare RGB triplets so Tailwind's opacity modifier works:
+     bg-background/80  →  rgba(var(--background), 0.8)
+   ─────────────────────────────────────────────────────────────────────────── */
+
 @layer base {
     :root {
         /* Light mode */

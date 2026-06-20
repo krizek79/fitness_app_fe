@@ -1,12 +1,12 @@
-import {useRef} from 'react';
+﻿import {useRef} from 'react';
 import {Platform, Pressable, useWindowDimensions, View} from 'react-native';
 import {Slot, Tabs, usePathname, useRouter} from 'expo-router';
 import {Ionicons} from '@expo/vector-icons';
 import {useColorScheme} from 'nativewind';
-import {TabBar} from '@/src/components/ui/TabBar';
-import {Sidebar, SidebarRef} from '@/src/components/ui/Sidebar';
-import {Heading} from '@/src/components/ui/Typography';
-import {Avatar} from '@/src/components/ui/Avatar';
+import {TabBar} from '@/src/components/primitives/TabBar';
+import {Sidebar, SidebarRef} from '@/src/components/primitives/sidebar';
+import {Heading} from '@/src/components/primitives/Typography';
+import {Avatar} from '@/src/components/primitives/Avatar';
 import {useCurrentUser} from '@/src/context/UserContext';
 import {themeColors} from '@/src/constants/colors';
 import {TABS} from '@/src/constants/tabs';
@@ -43,7 +43,7 @@ export default function TabLayout() {
             <View className="flex-1 flex-row">
                 <Sidebar key={isMobileWeb ? 'mobile' : 'desktop'} ref={sidebarRef}/>
                 <View className="flex-1">
-                    {/* Unified top bar — shows page title; hamburger only on mobile web */}
+                    {/* Unified top bar â€” shows page title; hamburger only on mobile web */}
                     <View
                         className="flex-row items-center border-b border-border bg-card"
                         style={{height: 56, paddingHorizontal: 16, gap: 8}}
