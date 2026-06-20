@@ -3,10 +3,9 @@ import {useLocalSearchParams, useRouter} from 'expo-router';
 import {Ionicons} from '@expo/vector-icons';
 import {useColorScheme} from 'nativewind';
 import {useGetPlanById, useDeletePlan} from '@/src/api/generated/plan/plan';
-import type {WeekSimpleResponse} from '@/src/api/generated/model';
 import {Heading, Typography} from '@/src/components/primitives/Typography';
 import {Skeleton, SkeletonGroup} from '@/src/components/primitives/Skeleton';
-import {Card} from '@/src/components/primitives/Card';
+import {WeekCard} from '@/src/components/week/WeekCard';
 import {DetailLayout, webContentStyle} from '@/src/components/primitives/DetailLayout';
 import {themeColors} from '@/src/constants/colors';
 
@@ -23,45 +22,6 @@ function PlanDetailSkeleton() {
                 </View>
             ))}
         </SkeletonGroup>
-    );
-}
-
-function WeekCard({week}: {week: WeekSimpleResponse}) {
-    const completedWorkouts = week.numberOfCompletedWorkouts ?? 0;
-    const totalWorkouts = week.numberOfWorkouts ?? 0;
-    const progress = totalWorkouts > 0 ? completedWorkouts / totalWorkouts : 0;
-
-    return (
-        <Card padding="md" className="gap-2">
-            <View className="flex-row items-center justify-between">
-                <Typography variant="body" className="text-foreground font-medium">
-                    Week {week.order}
-                </Typography>
-                {week.completed && (
-                    <View className="flex-row items-center gap-1">
-                        <Ionicons name="checkmark-circle" size={16} color="#22c55e"/>
-                        <Typography variant="caption" className="text-green-500">Completed</Typography>
-                    </View>
-                )}
-            </View>
-
-            {totalWorkouts > 0 && (
-                <View className="gap-1">
-                    <View className="flex-row justify-between">
-                        <Typography variant="caption" className="text-muted-foreground">Workouts</Typography>
-                        <Typography variant="caption" className="text-muted-foreground">
-                            {completedWorkouts}/{totalWorkouts}
-                        </Typography>
-                    </View>
-                    <View className="h-1.5 rounded-full bg-muted overflow-hidden">
-                        <View
-                            className="h-full rounded-full bg-primary"
-                            style={{width: `${Math.round(progress * 100)}%`}}
-                        />
-                    </View>
-                </View>
-            )}
-        </Card>
     );
 }
 
@@ -159,7 +119,11 @@ export default function PlanDetailScreen() {
                             <View className="gap-3">
                                 <Heading level="h5">Weeks</Heading>
                                 {plan!.weeks!.map(week => (
-                                    <WeekCard key={week.id} week={week}/>
+                                    <WeekCard
+                                        key={week.id}
+                                        week={week}
+                                        onPress={() => router.push({pathname: '/week/[id]', params: {id: week.id!}})}
+                                    />
                                 ))}
                             </View>
                         )}
