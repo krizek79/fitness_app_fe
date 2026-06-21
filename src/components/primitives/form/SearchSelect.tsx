@@ -1,8 +1,8 @@
-import {Pressable, View} from 'react-native';
+import {Pressable, Text, View} from 'react-native';
 import {Ionicons} from '@expo/vector-icons';
 import {useColorScheme} from 'nativewind';
 import {cn} from '@/src/lib/utils';
-import {Typography} from '@/src/components/primitives/Typography';
+import {Typography} from '@/src/components/primitives/ui/Typography';
 import {themeColors} from '@/src/constants/colors';
 
 interface SearchSelectProps<T> {
@@ -53,7 +53,7 @@ export function SearchSelect<T>({
                 <Ionicons name="search" size={18} color={palette.mutedForeground}/>
             </Pressable>
             {error && (
-                <Typography variant="caption" className="text-destructive">{error}</Typography>
+                <Text className="text-xs text-destructive">{error}</Text>
             )}
         </View>
     );

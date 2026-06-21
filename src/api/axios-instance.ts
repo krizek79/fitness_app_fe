@@ -14,6 +14,64 @@ const getBaseUrl = () => {
     return baseUrl;
 };
 
+// Orval appends JSON request parts as plain strings. Spring's @RequestPart needs
+// Content-Type: application/json on each JSON part or it falls back to octet-stream → 415.
+// Web: wrap JSON strings in a Blob so the browser sets the correct part Content-Type.
+// React Native: RN 0.76+ FormData has entries() like web, but new Blob([string]) in RN
+// doesn't serialize correctly through the native HTTP stack. Instead we copy _parts as-is
+// and patch getParts() — the method RN's XHR calls to build the native multipart body —
+// to override content-type on JSON string parts.
+function fixFormDataJsonParts(source: FormData): FormData {
+    const rebuilt = new FormData();
+
+    if (Platform.OS === 'web') {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        for (const [key, value] of (source as any).entries()) {
+            if (typeof value === 'string') {
+                const trimmed = value.trim();
+                if (trimmed.startsWith('{') || trimmed.startsWith('[')) {
+                    rebuilt.append(key, new Blob([value], {type: 'application/json'}));
+                } else {
+                    rebuilt.append(key, value);
+                }
+            } else {
+                rebuilt.append(key, value as Blob);
+            }
+        }
+        return rebuilt;
+    }
+
+    // React Native: copy _parts then patch getParts() to set application/json
+    // on JSON string parts without touching the actual Blob/file parts.
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const parts: Array<[string, unknown]> = (source as any)._parts ?? [];
+    for (const [key, value] of parts) {
+        rebuilt.append(key, value as string | Blob);
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const origGetParts = (rebuilt as any).getParts?.bind(rebuilt);
+    if (origGetParts) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (rebuilt as any).getParts = () =>
+            (origGetParts() as Array<Record<string, unknown>>).map(part => {
+                const str = part.string as string | undefined;
+                if (typeof str === 'string') {
+                    const t = str.trim();
+                    if (t.startsWith('{') || t.startsWith('[')) {
+                        return {
+                            ...part,
+                            headers: {...(part.headers as object), 'content-type': 'application/json'},
+                        };
+                    }
+                }
+                return part;
+            });
+    }
+
+    return rebuilt;
+}
+
 export const AXIOS_INSTANCE = axios.create({
     baseURL: getBaseUrl(),
     headers: {'Content-Type': 'application/json'},
@@ -34,6 +92,23 @@ AXIOS_INSTANCE.interceptors.request.use((config: InternalAxiosRequestConfig) => 
         config.headers.Authorization = `Bearer ${token}`;
     }
     config.headers['X-Trace-Id'] = generateTraceId();
+
+    // React Native's FormData returns '[object Object]' from Object.prototype.toString,
+    // so axios's isFormData() check fails. axios then transforms FormData as a plain
+    // object, producing a garbage body with Content-Type: application/octet-stream.
+    // Duck-typing the check and bypassing transformRequest lets RN's XHR layer
+    // receive the original FormData and set the multipart boundary itself.
+    if (config.data != null && typeof (config.data as FormData).append === 'function') {
+        // Orval appends JSON fields as plain strings: formData.append('request', JSON.stringify(...))
+        // Spring's @RequestPart deserialiser requires Content-Type: application/json on that part.
+        // Without it, Spring sees raw bytes → application/octet-stream → 415.
+        // We rebuild the FormData, promoting JSON-string parts to Blob(application/json).
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (config as any).transformRequest = [(data: unknown) => fixFormDataJsonParts(data as FormData)];
+        // Let the browser/RN network layer set Content-Type with the generated boundary.
+        config.headers.delete('Content-Type');
+    }
+
     return config;
 });
 

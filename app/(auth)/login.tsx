@@ -12,9 +12,9 @@ import {
     getRedirectUri,
 } from '@/src/lib/auth/auth';
 import {generateCodeChallenge, generateCodeVerifier} from '@/src/lib/auth/pkce';
-import {Button} from '@/src/components/primitives/Button';
-import {Divider} from '@/src/components/primitives/Divider';
-import {Heading, Typography} from '@/src/components/primitives/Typography';
+import {Button} from '@/src/components/primitives/ui/Button';
+import {Divider} from '@/src/components/primitives/ui/Divider';
+import {Heading, Typography} from '@/src/components/primitives/ui/Typography';
 
 // Required for expo-auth-session to complete the session on Android/iOS.
 WebBrowser.maybeCompleteAuthSession();

@@ -1,7 +1,7 @@
-﻿import React from 'react';
+import React from 'react';
 import {View} from 'react-native';
-import {Heading, Typography} from '@/src/components/primitives/Typography';
-import {Button, ButtonProps} from '@/src/components/primitives/Button';
+import {Heading, Typography} from '@/src/components/primitives/ui/Typography';
+import {Button, ButtonProps} from '@/src/components/primitives/ui/Button';
 
 interface EmptyStateAction {
     label: string;

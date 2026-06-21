@@ -35,7 +35,6 @@ export function Avatar({name, imageUrl, size = 'md', className}: AvatarProps) {
     if (imageUrl && !imgError) {
         if (Platform.OS === 'web') {
             return (
-                // @ts-ignore — referrerPolicy is a valid HTML img attribute on web
                 <img
                     src={imageUrl}
                     referrerPolicy="no-referrer"
@@ -46,7 +45,7 @@ export function Avatar({name, imageUrl, size = 'md', className}: AvatarProps) {
                         borderRadius: s.px / 2,
                         objectFit: 'cover',
                     }}
-                />
+                 alt=""/>
             );
         }
 

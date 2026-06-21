@@ -1,8 +1,8 @@
 ﻿import {View} from 'react-native';
 import {Ionicons} from '@expo/vector-icons';
 import type {PlanSimpleResponse} from '@/src/api/generated/model';
-import {Card} from '@/src/components/primitives/Card';
-import {Typography} from '@/src/components/primitives/Typography';
+import {Card} from '@/src/components/primitives/ui/Card';
+import {Typography} from '@/src/components/primitives/ui/Typography';
 import {useColorScheme} from 'nativewind';
 import {themeColors} from '@/src/constants/colors';
 

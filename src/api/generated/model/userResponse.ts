@@ -9,5 +9,6 @@ import type { ProfileDetailResponse } from './profileDetailResponse';
 export interface UserResponse {
   id?: number;
   email?: string;
+  isAdmin?: boolean;
   profile?: ProfileDetailResponse;
 }

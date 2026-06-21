@@ -3,7 +3,7 @@ import {Stack, useRouter} from 'expo-router';
 import {Ionicons} from '@expo/vector-icons';
 import {useColorScheme} from 'nativewind';
 import {themeColors} from '@/src/constants/colors';
-import {Heading} from './Typography';
+import {Heading} from '../ui/Typography';
 
 interface DetailLayoutProps {
     title: string;
@@ -49,7 +49,7 @@ export function DetailLayout({title, headerRight, children}: DetailLayoutProps) 
                 style={{height: 56, paddingHorizontal: 16, gap: 12}}
             >
                 <Pressable
-                    onPress={() => router.back()}
+                    onPress={() => router.canGoBack() ? router.back() : router.dismiss()}
                     style={{padding: 8, borderRadius: 8}}
                     accessibilityLabel="Go back"
                 >

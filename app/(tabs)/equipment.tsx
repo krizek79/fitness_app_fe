@@ -4,54 +4,67 @@ import {useForm, useWatch} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {Ionicons} from '@expo/vector-icons';
 import {useRouter} from 'expo-router';
-import {useFilterPlans} from '@/src/api/generated/plan/plan';
-import type {PlanSimpleResponse} from '@/src/api/generated/model';
-import {PlanCard} from '@/src/components/plans/PlanCard';
-import {CreatePlanFab} from '@/src/components/plans/CreatePlanFab';
+import {useFilterEquipment} from '@/src/api/generated/equipment/equipment';
+import type {EquipmentResponse} from '@/src/api/generated/model';
+import {EquipmentCard} from '@/src/components/equipment/EquipmentCard';
 import {FilteredList} from '@/src/components/primitives/layout/FilteredList';
+import {Fab} from '@/src/components/primitives/ui/Fab';
 import {Skeleton, SkeletonGroup} from '@/src/components/primitives/ui/Skeleton';
 import {SearchInput} from '@/src/components/primitives/form/SearchInput';
 import {SortToggle} from '@/src/components/primitives/filter/SortToggle';
 import {WebRefreshButton} from '@/src/components/primitives/filter/WebRefreshButton';
 import {useDebounce} from '@/src/hooks/useDebounce';
 import {usePaginatedMutation} from '@/src/hooks/usePaginatedMutation';
-import {planFilterSchema, PLAN_FILTER_DEFAULTS, type PlanFilterFormValues} from '@/src/lib/schemas/plans/planFilter';
+import {
+    equipmentFilterSchema,
+    EQUIPMENT_FILTER_DEFAULTS,
+    type EquipmentFilterFormValues,
+} from '@/src/lib/schemas/equipment/equipmentFilter';
 
 const PAGE_SIZE = 20;
 
-function PlanListSkeleton() {
+function EquipmentListSkeleton() {
     return (
         <SkeletonGroup gap={12}>
-            {Array.from({length: 5}).map((_, i) => (
-                <View key={i} className="rounded-lg border border-border bg-card p-4 gap-3">
-                    <Skeleton height={18} width="70%" rounded="md"/>
-                    <Skeleton height={13} width="45%" rounded="md"/>
-                    <Skeleton height={6} width="100%" rounded="full"/>
+            {Array.from({length: 6}).map((_, i) => (
+                <View key={i} className="flex-row rounded-lg border border-border bg-card overflow-hidden" style={{height: 72}}>
+                    <Skeleton height={72} width={72}/>
+                    <View className="flex-1 justify-center px-4">
+                        <Skeleton height={18} width="60%" rounded="md"/>
+                    </View>
                 </View>
             ))}
         </SkeletonGroup>
     );
 }
 
-export default function PlansScreen() {
+export default function EquipmentScreen() {
     const router = useRouter();
 
-    const {control, setValue} = useForm<PlanFilterFormValues>({
-        resolver: zodResolver(planFilterSchema),
-        defaultValues: PLAN_FILTER_DEFAULTS,
+    const {control, setValue} = useForm<EquipmentFilterFormValues>({
+        resolver: zodResolver(equipmentFilterSchema),
+        defaultValues: EQUIPMENT_FILTER_DEFAULTS,
     });
 
     const titleValue = useWatch({control, name: 'title'}) ?? '';
     const sortDirection = useWatch({control, name: 'sortDirection'});
     const debouncedTitle = useDebounce(titleValue, 400);
 
-    const {mutate, isPending} = useFilterPlans();
+    const {mutate, isPending} = useFilterEquipment();
 
-    const {items: plans, isRefreshing, refresh, loadNextPage, isInitialLoad} =
-        usePaginatedMutation<PlanSimpleResponse>({
+    const {items: equipment, isRefreshing, refresh, loadNextPage, isInitialLoad} =
+        usePaginatedMutation<EquipmentResponse>({
             fetch: useCallback((page, onSuccess, onSettled) =>
                 mutate(
-                    {data: {page, size: PAGE_SIZE, sortBy: 'title', sortDirection, title: debouncedTitle || undefined}},
+                    {
+                        data: {
+                            page,
+                            size: PAGE_SIZE,
+                            sortBy: 'title',
+                            sortDirection,
+                            title: debouncedTitle || undefined,
+                        },
+                    },
                     {onSuccess: d => onSuccess(d.results ?? [], d.totalPages ?? 1), onSettled},
                 ),
             [mutate, sortDirection, debouncedTitle]),
@@ -61,14 +74,13 @@ export default function PlansScreen() {
 
     const hasActiveFilter = !!debouncedTitle;
 
-    // filterBar is rendered outside FlatList so the search input never loses focus on re-renders
     const filterBar = (
         <View className="flex-row items-center gap-2 px-6 py-3">
             <View className="flex-1">
                 <SearchInput
                     value={titleValue}
                     onChangeText={text => setValue('title', text)}
-                    placeholder="Search plans..."
+                    placeholder="Search equipment..."
                 />
             </View>
             <SortToggle
@@ -80,14 +92,14 @@ export default function PlansScreen() {
     );
 
     return (
-        <FilteredList<PlanSimpleResponse>
-            data={plans}
+        <FilteredList<EquipmentResponse>
+            data={equipment}
             renderItem={({item}) => (
                 <View className="px-6">
-                    <PlanCard
-                        plan={item}
+                    <EquipmentCard
+                        equipment={item}
                         onPress={item.id !== undefined
-                            ? () => router.push({pathname: '/plan/[id]', params: {id: item.id!}})
+                            ? () => router.push({pathname: '/equipment/[id]', params: {id: item.id!}})
                             : undefined
                         }
                     />
@@ -95,20 +107,20 @@ export default function PlansScreen() {
             )}
             keyExtractor={item => String(item.id)}
             filterBar={filterBar}
-            skeleton={<View className="px-6"><PlanListSkeleton/></View>}
-            emptyIcon={<Ionicons name="calendar-outline" size={48} color="#9ca3af"/>}
-            emptyTitle={hasActiveFilter ? 'No plans found' : 'No plans yet'}
+            skeleton={<View className="px-6"><EquipmentListSkeleton/></View>}
+            emptyIcon={<Ionicons name="bicycle-outline" size={48} color="#9ca3af"/>}
+            emptyTitle={hasActiveFilter ? 'No equipment found' : 'No equipment yet'}
             emptyDescription={
                 hasActiveFilter
-                    ? `No plans match "${debouncedTitle}". Try a different search.`
-                    : 'Your training plans will appear here.'
+                    ? 'Try adjusting your search.'
+                    : 'Equipment will appear here once added.'
             }
             isInitialLoad={isInitialLoad}
             isPending={isPending}
             isRefreshing={isRefreshing}
             onRefresh={refresh}
             onEndReached={loadNextPage}
-            fab={<CreatePlanFab onPress={() => router.push('/plan/create')}/>}
+            fab={<Fab onPress={() => router.push('/equipment/create')} accessibilityLabel="Create new equipment"/>}
         />
     );
 }

@@ -5,13 +5,22 @@
  * Comprehensive API for fitness application with support for workout plans, exercises, and progress tracking. API provides OAuth2 authentication via Keycloak or JWT tokens.
  */
 import {
-  useMutation
+  useMutation,
+  useQuery
 } from '@tanstack/react-query';
 import type {
+  DataTag,
+  DefinedInitialDataOptions,
+  DefinedUseQueryResult,
   MutationFunction,
   QueryClient,
+  QueryFunction,
+  QueryKey,
+  UndefinedInitialDataOptions,
   UseMutationOptions,
-  UseMutationResult
+  UseMutationResult,
+  UseQueryOptions,
+  UseQueryResult
 } from '@tanstack/react-query';
 
 import type {
@@ -25,6 +34,98 @@ import type {
 
 import { customInstance } from '../../axios-instance';
 
+
+
+
+/**
+ * Retrieves a specific equipment by its unique ID.
+ * @summary Get equipment by ID
+ */
+export const getEquipmentById = (
+    id: number,
+ signal?: AbortSignal
+) => {
+      
+      
+      return customInstance<EquipmentResponse>(
+      {url: `/equipment/${id}`, method: 'GET', signal
+    },
+      );
+    }
+  
+
+
+
+export const getGetEquipmentByIdQueryKey = (id?: number,) => {
+    return [
+    `/equipment/${id}`
+    ] as const;
+    }
+
+    
+export const getGetEquipmentByIdQueryOptions = <TData = Awaited<ReturnType<typeof getEquipmentById>>, TError = ProblemDetails | ProblemDetails | ProblemDetails>(id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getEquipmentById>>, TError, TData>>, }
+) => {
+
+const {query: queryOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetEquipmentByIdQueryKey(id);
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getEquipmentById>>> = ({ signal }) => getEquipmentById(id, signal);
+
+      
+
+      
+
+   return  { queryKey, queryFn, enabled: !!(id), ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getEquipmentById>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type GetEquipmentByIdQueryResult = NonNullable<Awaited<ReturnType<typeof getEquipmentById>>>
+export type GetEquipmentByIdQueryError = ProblemDetails | ProblemDetails | ProblemDetails
+
+
+export function useGetEquipmentById<TData = Awaited<ReturnType<typeof getEquipmentById>>, TError = ProblemDetails | ProblemDetails | ProblemDetails>(
+ id: number, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getEquipmentById>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getEquipmentById>>,
+          TError,
+          Awaited<ReturnType<typeof getEquipmentById>>
+        > , 'initialData'
+      >, }
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetEquipmentById<TData = Awaited<ReturnType<typeof getEquipmentById>>, TError = ProblemDetails | ProblemDetails | ProblemDetails>(
+ id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getEquipmentById>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getEquipmentById>>,
+          TError,
+          Awaited<ReturnType<typeof getEquipmentById>>
+        > , 'initialData'
+      >, }
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetEquipmentById<TData = Awaited<ReturnType<typeof getEquipmentById>>, TError = ProblemDetails | ProblemDetails | ProblemDetails>(
+ id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getEquipmentById>>, TError, TData>>, }
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Get equipment by ID
+ */
+
+export function useGetEquipmentById<TData = Awaited<ReturnType<typeof getEquipmentById>>, TError = ProblemDetails | ProblemDetails | ProblemDetails>(
+ id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getEquipmentById>>, TError, TData>>, }
+ , queryClient?: QueryClient 
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getGetEquipmentByIdQueryOptions(id,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  query.queryKey = queryOptions.queryKey ;
+
+  return query;
+}
 
 
 

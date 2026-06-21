@@ -3,10 +3,10 @@ import {useLocalSearchParams, useRouter} from 'expo-router';
 import {Ionicons} from '@expo/vector-icons';
 import {useColorScheme} from 'nativewind';
 import {useGetPlanById, useDeletePlan} from '@/src/api/generated/plan/plan';
-import {Heading, Typography} from '@/src/components/primitives/Typography';
-import {Skeleton, SkeletonGroup} from '@/src/components/primitives/Skeleton';
+import {Heading, Typography} from '@/src/components/primitives/ui/Typography';
+import {Skeleton, SkeletonGroup} from '@/src/components/primitives/ui/Skeleton';
 import {WeekCard} from '@/src/components/week/WeekCard';
-import {DetailLayout, webContentStyle} from '@/src/components/primitives/DetailLayout';
+import {DetailLayout, webContentStyle} from '@/src/components/primitives/layout/DetailLayout';
 import {themeColors} from '@/src/constants/colors';
 
 function PlanDetailSkeleton() {
@@ -35,21 +35,24 @@ export default function PlanDetailScreen() {
     const {mutate: deletePlan, isPending: isDeleting} = useDeletePlan();
 
     function handleDelete() {
-        Alert.alert(
-            'Delete plan',
-            `Are you sure you want to delete "${plan?.title ?? 'this plan'}"? This cannot be undone.`,
-            [
-                {text: 'Cancel', style: 'cancel'},
-                {
-                    text: 'Delete',
-                    style: 'destructive',
-                    onPress: () => deletePlan(
-                        {id: Number(id)},
-                        {onSuccess: () => router.replace('/(tabs)/plans')},
-                    ),
-                },
-            ],
-        );
+        const message = `Are you sure you want to delete "${plan?.title ?? 'this plan'}"? This cannot be undone.`;
+        if (Platform.OS === 'web') {
+            if (window.confirm(message)) {
+                deletePlan({id: Number(id)}, {onSuccess: () => router.replace('/(tabs)/plans')});
+            }
+            return;
+        }
+        Alert.alert('Delete plan', message, [
+            {text: 'Cancel', style: 'cancel'},
+            {
+                text: 'Delete',
+                style: 'destructive',
+                onPress: () => deletePlan(
+                    {id: Number(id)},
+                    {onSuccess: () => router.replace('/(tabs)/plans')},
+                ),
+            },
+        ]);
     }
 
     const headerRight = !isLoading && (

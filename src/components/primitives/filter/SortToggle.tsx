@@ -2,7 +2,7 @@ import {Pressable} from 'react-native';
 import {Ionicons} from '@expo/vector-icons';
 import {useColorScheme} from 'nativewind';
 import {themeColors} from '@/src/constants/colors';
-import {Typography} from './Typography';
+import {Typography} from '../ui/Typography';
 
 interface SortToggleProps {
     direction: 'ASC' | 'DESC';

@@ -5,7 +5,7 @@ import {useRouter} from 'expo-router';
 import {Ionicons} from '@expo/vector-icons';
 import {useColorScheme} from 'nativewind';
 import {cn} from '@/src/lib/utils';
-import {Heading} from '../Typography';
+import {Heading} from '../../ui/Typography';
 import {themeColors} from '@/src/constants/colors';
 import {useCurrentUser} from '@/src/context/UserContext';
 import {SidebarNavItems} from './SidebarNavItems';

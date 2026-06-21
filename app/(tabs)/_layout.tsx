@@ -3,10 +3,10 @@ import {Platform, Pressable, useWindowDimensions, View} from 'react-native';
 import {Slot, Tabs, usePathname, useRouter} from 'expo-router';
 import {Ionicons} from '@expo/vector-icons';
 import {useColorScheme} from 'nativewind';
-import {TabBar} from '@/src/components/primitives/TabBar';
-import {Sidebar, SidebarRef} from '@/src/components/primitives/sidebar';
-import {Heading} from '@/src/components/primitives/Typography';
-import {Avatar} from '@/src/components/primitives/Avatar';
+import {TabBar} from '@/src/components/primitives/navigation/TabBar';
+import {Sidebar, SidebarRef} from '@/src/components/primitives/navigation/sidebar';
+import {Heading} from '@/src/components/primitives/ui/Typography';
+import {Avatar} from '@/src/components/primitives/ui/Avatar';
 import {useCurrentUser} from '@/src/context/UserContext';
 import {themeColors} from '@/src/constants/colors';
 import {TABS} from '@/src/constants/tabs';
@@ -33,9 +33,11 @@ export default function TabLayout() {
     const {width: windowWidth} = useWindowDimensions();
     const isMobileWeb = windowWidth < 768;
     const pathname = usePathname();
+    const {currentUser} = useCurrentUser();
+    const isAdmin = currentUser?.isAdmin === true;
 
     if (Platform.OS === 'web') {
-        const currentTab = TABS.find(
+        const currentTab = TABS.filter(t => !t.mobileOnly).find(
             tab => pathname === `/${tab.name}` || pathname.startsWith(`/${tab.name}/`),
         );
 
@@ -83,7 +85,12 @@ export default function TabLayout() {
                 <Tabs.Screen
                     key={tab.name}
                     name={tab.name}
-                    options={{title: tab.label}}
+                    options={{
+                        title: tab.label,
+                        // Hide from tab bar if admin-gated and user isn't admin, or if
+                        // tab.section is set (those screens are reached via the admin hub).
+                        href: (tab.adminOnly && !isAdmin) || tab.section ? null : undefined,
+                    }}
                 />
             ))}
         </Tabs>

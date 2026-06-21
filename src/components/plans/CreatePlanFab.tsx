@@ -1,4 +1,4 @@
-import {Fab} from '@/src/components/primitives/Fab';
+import {Fab} from '@/src/components/primitives/ui/Fab';
 
 interface CreatePlanFabProps {
     onPress: () => void;

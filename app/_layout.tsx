@@ -6,7 +6,7 @@ import {themeColors} from '@/src/constants/colors';
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
 import {AuthProvider, useAuth} from '@/src/context/AuthContext';
 import {UserProvider} from '@/src/context/UserContext';
-import {ToastContainer} from '@/src/components/primitives/ToastContainer';
+import {ToastContainer} from '@/src/components/primitives/layout/ToastContainer';
 import './globals.css';
 
 const queryClient = new QueryClient({

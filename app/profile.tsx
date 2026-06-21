@@ -3,11 +3,11 @@ import {useColorScheme} from 'nativewind';
 import {useAuth} from '@/src/context/AuthContext';
 import {useCurrentUser} from '@/src/context/UserContext';
 import {useGetProfileById} from '@/src/api/generated/profile/profile';
-import {Avatar} from '@/src/components/primitives/Avatar';
-import {Button} from '@/src/components/primitives/Button';
-import {Skeleton, SkeletonGroup} from '@/src/components/primitives/Skeleton';
-import {Heading, Typography} from '@/src/components/primitives/Typography';
-import {DetailLayout, webContentStyle} from '@/src/components/primitives/DetailLayout';
+import {Avatar} from '@/src/components/primitives/ui/Avatar';
+import {Button} from '@/src/components/primitives/ui/Button';
+import {Skeleton, SkeletonGroup} from '@/src/components/primitives/ui/Skeleton';
+import {Heading, Typography} from '@/src/components/primitives/ui/Typography';
+import {DetailLayout, webContentStyle} from '@/src/components/primitives/layout/DetailLayout';
 import {themeColors} from '@/src/constants/colors';
 
 export default function ProfileScreen() {

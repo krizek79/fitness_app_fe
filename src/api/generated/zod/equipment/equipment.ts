@@ -8,6 +8,14 @@ import zod from 'zod';
 
 
 /**
+ * Retrieves a specific equipment by its unique ID.
+ * @summary Get equipment by ID
+ */
+export const getEquipmentByIdParams = zod.object({
+  "id": zod.number()
+})
+
+/**
  * Updates a specific equipment identified by its ID with the provided input data and optional thumbnail image.
  * @summary Update an existing equipment
  */

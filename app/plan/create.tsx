@@ -9,11 +9,11 @@ import {useCreatePlan} from '@/src/api/generated/plan/plan';
 import {planCreateSchema, PLAN_CREATE_DEFAULTS, DESCRIPTION_MAX, WEEKS_MIN, WEEKS_MAX, type PlanCreateFormValues} from '@/src/lib/schemas/plans/planCreate';
 import {usePlanDraft} from '@/src/hooks/usePlanDraft';
 import {useDebounce} from '@/src/hooks/useDebounce';
-import {Input} from '@/src/components/primitives/Input';
-import {Button} from '@/src/components/primitives/Button';
-import {Typography} from '@/src/components/primitives/Typography';
-import {SearchSelect} from '@/src/components/primitives/SearchSelect';
-import {DetailLayout, webContentStyle} from '@/src/components/primitives/DetailLayout';
+import {Input} from '@/src/components/primitives/form/Input';
+import {Button} from '@/src/components/primitives/ui/Button';
+import {Typography} from '@/src/components/primitives/ui/Typography';
+import {SearchSelect} from '@/src/components/primitives/form/SearchSelect';
+import {DetailLayout, webContentStyle} from '@/src/components/primitives/layout/DetailLayout';
 import {themeColors} from '@/src/constants/colors';
 import {cn} from '@/src/lib/utils';
 

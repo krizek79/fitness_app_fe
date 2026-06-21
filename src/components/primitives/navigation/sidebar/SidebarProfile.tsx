@@ -1,8 +1,8 @@
 import {Pressable, View} from 'react-native';
 import Animated from 'react-native-reanimated';
 import {cn} from '@/src/lib/utils';
-import {Typography} from '../Typography';
-import {Avatar} from '../Avatar';
+import {Typography} from '../../ui/Typography';
+import {Avatar} from '../../ui/Avatar';
 import {themeColors} from '@/src/constants/colors';
 import {useColorScheme} from 'nativewind';
 import {usePathname} from 'expo-router';

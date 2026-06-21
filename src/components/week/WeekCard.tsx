@@ -1,9 +1,9 @@
 import {View} from 'react-native';
 import {Ionicons} from '@expo/vector-icons';
 import type {WeekSimpleResponse} from '@/src/api/generated/model';
-import {Typography} from '@/src/components/primitives/Typography';
-import {Card} from '@/src/components/primitives/Card';
-import {Badge} from '@/src/components/primitives/Badge';
+import {Typography} from '@/src/components/primitives/ui/Typography';
+import {Card} from '@/src/components/primitives/ui/Card';
+import {Badge} from '@/src/components/primitives/ui/Badge';
 
 interface WeekCardProps {
     week: WeekSimpleResponse;
