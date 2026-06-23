@@ -3,6 +3,7 @@
 export const themeColors = {
     light: {
         primary: 'rgb(250, 204, 21)',
+        foreground: 'rgb(15, 12, 10)',
         mutedForeground: 'rgb(115, 107, 99)',
         card: 'rgb(255, 255, 255)',
         border: 'rgb(224, 222, 218)',
@@ -10,6 +11,7 @@ export const themeColors = {
     },
     dark: {
         primary: 'rgb(250, 204, 21)',
+        foreground: 'rgb(240, 238, 235)',
         mutedForeground: 'rgb(140, 133, 124)',
         card: 'rgb(22, 19, 16)',
         border: 'rgb(45, 41, 35)',

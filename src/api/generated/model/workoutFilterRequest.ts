@@ -17,4 +17,5 @@ export interface WorkoutFilterRequest {
   tagIdList?: number[];
   authorId?: number;
   isTemplate?: boolean;
+  isQuick?: boolean;
 }

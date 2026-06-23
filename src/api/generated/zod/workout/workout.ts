@@ -31,6 +31,7 @@ export const updateWorkoutBody = zod.object({
   "title": zod.string().min(1).max(updateWorkoutBodyTitleMax),
   "description": zod.string().min(updateWorkoutBodyDescriptionMin).max(updateWorkoutBodyDescriptionMax).optional(),
   "weightUnit": zod.enum(['KG', 'LB']),
+  "distanceUnit": zod.enum(['KM', 'MILES']),
   "note": zod.string().optional(),
   "isTemplate": zod.boolean().describe('Should be set only during creation and cannot be updated later.'),
   "tags": zod.array(zod.object({
@@ -47,16 +48,11 @@ export const updateWorkoutBody = zod.object({
   "order": zod.number().min(1),
   "workoutExerciseSetType": zod.enum(['WARMUP', 'TOP_SET', 'BACKOFF_SET', 'STRAIGHT_SET', 'DROP_SET']),
   "goalRepetitions": zod.number().optional(),
-  "actualRepetitions": zod.number().optional().describe('Should be set only for update. For new object, this field should be null.'),
   "goalWeight": zod.number().optional(),
-  "actualWeight": zod.number().optional().describe('Should be set only for update. For new object, this field should be null.'),
   "goalTimeSeconds": zod.number().optional(),
-  "actualTimeSeconds": zod.number().optional().describe('Should be set only for update. For new object, this field should be null.'),
   "goalDistanceMeters": zod.number().optional(),
-  "actualDistanceMeters": zod.number().optional().describe('Should be set only for update. For new object, this field should be null.'),
   "restDurationSeconds": zod.number().optional(),
-  "note": zod.string().optional(),
-  "completed": zod.boolean().optional()
+  "note": zod.string().optional()
 }))
 }))
 })
@@ -81,6 +77,7 @@ export const createWorkoutBody = zod.object({
   "title": zod.string().min(1).max(createWorkoutBodyTitleMax),
   "description": zod.string().min(createWorkoutBodyDescriptionMin).max(createWorkoutBodyDescriptionMax).optional(),
   "weightUnit": zod.enum(['KG', 'LB']),
+  "distanceUnit": zod.enum(['KM', 'MILES']),
   "note": zod.string().optional(),
   "isTemplate": zod.boolean().describe('Should be set only during creation and cannot be updated later.'),
   "tags": zod.array(zod.object({
@@ -97,16 +94,11 @@ export const createWorkoutBody = zod.object({
   "order": zod.number().min(1),
   "workoutExerciseSetType": zod.enum(['WARMUP', 'TOP_SET', 'BACKOFF_SET', 'STRAIGHT_SET', 'DROP_SET']),
   "goalRepetitions": zod.number().optional(),
-  "actualRepetitions": zod.number().optional().describe('Should be set only for update. For new object, this field should be null.'),
   "goalWeight": zod.number().optional(),
-  "actualWeight": zod.number().optional().describe('Should be set only for update. For new object, this field should be null.'),
   "goalTimeSeconds": zod.number().optional(),
-  "actualTimeSeconds": zod.number().optional().describe('Should be set only for update. For new object, this field should be null.'),
   "goalDistanceMeters": zod.number().optional(),
-  "actualDistanceMeters": zod.number().optional().describe('Should be set only for update. For new object, this field should be null.'),
   "restDurationSeconds": zod.number().optional(),
-  "note": zod.string().optional(),
-  "completed": zod.boolean().optional()
+  "note": zod.string().optional()
 }))
 }))
 })
@@ -126,6 +118,7 @@ export const filterWorkoutsBody = zod.object({
   "title": zod.string().optional(),
   "tagIdList": zod.array(zod.number()).optional(),
   "authorId": zod.number().optional(),
-  "isTemplate": zod.boolean().optional()
+  "isTemplate": zod.boolean().optional(),
+  "isQuick": zod.boolean().optional()
 })
 

@@ -218,7 +218,7 @@ export function EquipmentPickerField({value, onChange, label, error, initialItem
                                                 />
                                             )
                                         ) : (
-                                            <Ionicons name="bicycle-outline" size={22} color={palette.mutedForeground}/>
+                                            <Ionicons name="cube-outline" size={22} color={palette.mutedForeground}/>
                                         )}
                                     </View>
                                     <Typography variant="body" className="flex-1 text-foreground">

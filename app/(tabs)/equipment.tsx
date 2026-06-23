@@ -108,7 +108,7 @@ export default function EquipmentScreen() {
             keyExtractor={item => String(item.id)}
             filterBar={filterBar}
             skeleton={<View className="px-6"><EquipmentListSkeleton/></View>}
-            emptyIcon={<Ionicons name="bicycle-outline" size={48} color="#9ca3af"/>}
+            emptyIcon={<Ionicons name="cube-outline" size={48} color="#9ca3af"/>}
             emptyTitle={hasActiveFilter ? 'No equipment found' : 'No equipment yet'}
             emptyDescription={
                 hasActiveFilter

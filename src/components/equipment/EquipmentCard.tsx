@@ -34,7 +34,7 @@ export function EquipmentCard({equipment, onPress}: EquipmentCardProps) {
                         />
                     )
                 ) : (
-                    <Ionicons name="bicycle-outline" size={28} color={palette.mutedForeground}/>
+                    <Ionicons name="cube-outline" size={28} color={palette.mutedForeground}/>
                 )}
             </View>
 

@@ -27,6 +27,7 @@ export const updateWeekWorkoutBody = zod.object({
   "title": zod.string().min(1).max(updateWeekWorkoutBodyWorkoutTitleMax),
   "description": zod.string().min(updateWeekWorkoutBodyWorkoutDescriptionMin).max(updateWeekWorkoutBodyWorkoutDescriptionMax).optional(),
   "weightUnit": zod.enum(['KG', 'LB']),
+  "distanceUnit": zod.enum(['KM', 'MILES']),
   "note": zod.string().optional(),
   "isTemplate": zod.boolean().describe('Should be set only during creation and cannot be updated later.'),
   "tags": zod.array(zod.object({
@@ -43,22 +44,17 @@ export const updateWeekWorkoutBody = zod.object({
   "order": zod.number().min(1),
   "workoutExerciseSetType": zod.enum(['WARMUP', 'TOP_SET', 'BACKOFF_SET', 'STRAIGHT_SET', 'DROP_SET']),
   "goalRepetitions": zod.number().optional(),
-  "actualRepetitions": zod.number().optional().describe('Should be set only for update. For new object, this field should be null.'),
   "goalWeight": zod.number().optional(),
-  "actualWeight": zod.number().optional().describe('Should be set only for update. For new object, this field should be null.'),
   "goalTimeSeconds": zod.number().optional(),
-  "actualTimeSeconds": zod.number().optional().describe('Should be set only for update. For new object, this field should be null.'),
   "goalDistanceMeters": zod.number().optional(),
-  "actualDistanceMeters": zod.number().optional().describe('Should be set only for update. For new object, this field should be null.'),
   "restDurationSeconds": zod.number().optional(),
-  "note": zod.string().optional(),
-  "completed": zod.boolean().optional()
+  "note": zod.string().optional()
 }))
 }))
 }).optional(),
   "dayOfWeek": zod.enum(['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY', 'SUNDAY']),
   "orderInTheDay": zod.number().min(1).describe('Order of the workout within the same day. Defaults to 1.'),
-  "completed": zod.boolean()
+  "status": zod.enum(['NOT_STARTED', 'IN_PROGRESS', 'COMPLETED', 'SKIPPED']).optional().describe('Workout status. Cannot be set on creation — defaults to NOT_STARTED.')
 })
 
 /**
@@ -85,6 +81,7 @@ export const createWeekWorkoutBody = zod.object({
   "title": zod.string().min(1).max(createWeekWorkoutBodyWorkoutTitleMax),
   "description": zod.string().min(createWeekWorkoutBodyWorkoutDescriptionMin).max(createWeekWorkoutBodyWorkoutDescriptionMax).optional(),
   "weightUnit": zod.enum(['KG', 'LB']),
+  "distanceUnit": zod.enum(['KM', 'MILES']),
   "note": zod.string().optional(),
   "isTemplate": zod.boolean().describe('Should be set only during creation and cannot be updated later.'),
   "tags": zod.array(zod.object({
@@ -101,21 +98,16 @@ export const createWeekWorkoutBody = zod.object({
   "order": zod.number().min(1),
   "workoutExerciseSetType": zod.enum(['WARMUP', 'TOP_SET', 'BACKOFF_SET', 'STRAIGHT_SET', 'DROP_SET']),
   "goalRepetitions": zod.number().optional(),
-  "actualRepetitions": zod.number().optional().describe('Should be set only for update. For new object, this field should be null.'),
   "goalWeight": zod.number().optional(),
-  "actualWeight": zod.number().optional().describe('Should be set only for update. For new object, this field should be null.'),
   "goalTimeSeconds": zod.number().optional(),
-  "actualTimeSeconds": zod.number().optional().describe('Should be set only for update. For new object, this field should be null.'),
   "goalDistanceMeters": zod.number().optional(),
-  "actualDistanceMeters": zod.number().optional().describe('Should be set only for update. For new object, this field should be null.'),
   "restDurationSeconds": zod.number().optional(),
-  "note": zod.string().optional(),
-  "completed": zod.boolean().optional()
+  "note": zod.string().optional()
 }))
 }))
 }).optional(),
   "dayOfWeek": zod.enum(['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY', 'SUNDAY']),
   "orderInTheDay": zod.number().min(1).describe('Order of the workout within the same day. Defaults to 1.'),
-  "completed": zod.boolean()
+  "status": zod.enum(['NOT_STARTED', 'IN_PROGRESS', 'COMPLETED', 'SKIPPED']).optional().describe('Workout status. Cannot be set on creation — defaults to NOT_STARTED.')
 })
 

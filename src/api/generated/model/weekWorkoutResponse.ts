@@ -6,6 +6,7 @@
  */
 import type { WorkoutSimpleResponse } from './workoutSimpleResponse';
 import type { WeekWorkoutResponseDayOfWeek } from './weekWorkoutResponseDayOfWeek';
+import type { WeekWorkoutResponseStatus } from './weekWorkoutResponseStatus';
 
 export interface WeekWorkoutResponse {
   id?: number;
@@ -13,5 +14,5 @@ export interface WeekWorkoutResponse {
   workout?: WorkoutSimpleResponse;
   dayOfWeek?: WeekWorkoutResponseDayOfWeek;
   orderInTheDay?: number;
-  completed?: boolean;
+  status?: WeekWorkoutResponseStatus;
 }

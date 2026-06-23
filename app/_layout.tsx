@@ -2,6 +2,7 @@
 import {ActivityIndicator, View} from 'react-native';
 import {Stack, useRouter, useSegments} from 'expo-router';
 import {useColorScheme} from 'nativewind';
+import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import {themeColors} from '@/src/constants/colors';
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
 import {AuthProvider, useAuth} from '@/src/context/AuthContext';
@@ -62,17 +63,19 @@ function AuthGate({children}: { children: React.ReactNode }) {
 
 export default function RootLayout() {
     return (
-        <QueryClientProvider client={queryClient}>
-            <AuthProvider>
-                <UserProvider>
-                    <View style={{flex: 1}}>
-                        <AuthGate>
-                            <Stack screenOptions={{headerShown: false}}/>
-                        </AuthGate>
-                        <ToastContainer/>
-                    </View>
-                </UserProvider>
-            </AuthProvider>
-        </QueryClientProvider>
+        <GestureHandlerRootView style={{flex: 1}}>
+            <QueryClientProvider client={queryClient}>
+                <AuthProvider>
+                    <UserProvider>
+                        <View style={{flex: 1}}>
+                            <AuthGate>
+                                <Stack screenOptions={{headerShown: false}}/>
+                            </AuthGate>
+                            <ToastContainer/>
+                        </View>
+                    </UserProvider>
+                </AuthProvider>
+            </QueryClientProvider>
+        </GestureHandlerRootView>
     );
 }

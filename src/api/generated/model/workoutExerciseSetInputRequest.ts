@@ -13,18 +13,9 @@ export interface WorkoutExerciseSetInputRequest {
   order: number;
   workoutExerciseSetType: WorkoutExerciseSetInputRequestWorkoutExerciseSetType;
   goalRepetitions?: number;
-  /** Should be set only for update. For new object, this field should be null. */
-  actualRepetitions?: number;
   goalWeight?: number;
-  /** Should be set only for update. For new object, this field should be null. */
-  actualWeight?: number;
   goalTimeSeconds?: number;
-  /** Should be set only for update. For new object, this field should be null. */
-  actualTimeSeconds?: number;
   goalDistanceMeters?: number;
-  /** Should be set only for update. For new object, this field should be null. */
-  actualDistanceMeters?: number;
   restDurationSeconds?: number;
   note?: string;
-  completed?: boolean;
 }

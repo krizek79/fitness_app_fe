@@ -102,7 +102,7 @@ export default function EquipmentDetailScreen() {
                             )
                         ) : (
                             <View className="flex-1 items-center justify-center">
-                                <Ionicons name="fitness-outline" size={64} color={palette.mutedForeground}/>
+                                <Ionicons name="cube-outline" size={64} color={palette.mutedForeground}/>
                             </View>
                         )}
 

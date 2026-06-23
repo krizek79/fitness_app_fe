@@ -18,6 +18,7 @@ export interface WorkoutDetailResponse {
   description?: string;
   isTemplate?: boolean;
   weightUnit?: ReferenceDataResponse;
+  distanceUnit?: ReferenceDataResponse;
   note?: string;
   workoutExercises?: WorkoutExerciseResponse[];
 }

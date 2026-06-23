@@ -5,6 +5,7 @@
  * Comprehensive API for fitness application with support for workout plans, exercises, and progress tracking. API provides OAuth2 authentication via Keycloak or JWT tokens.
  */
 import type { WorkoutInputRequestWeightUnit } from './workoutInputRequestWeightUnit';
+import type { WorkoutInputRequestDistanceUnit } from './workoutInputRequestDistanceUnit';
 import type { TagCreateRequest } from './tagCreateRequest';
 import type { WorkoutExerciseInputRequest } from './workoutExerciseInputRequest';
 
@@ -21,6 +22,7 @@ export interface WorkoutInputRequest {
    */
   description?: string;
   weightUnit: WorkoutInputRequestWeightUnit;
+  distanceUnit: WorkoutInputRequestDistanceUnit;
   note?: string;
   /** Should be set only during creation and cannot be updated later. */
   isTemplate: boolean;

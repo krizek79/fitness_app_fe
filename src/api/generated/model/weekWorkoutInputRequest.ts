@@ -6,6 +6,7 @@
  */
 import type { WorkoutInputRequest } from './workoutInputRequest';
 import type { WeekWorkoutInputRequestDayOfWeek } from './weekWorkoutInputRequestDayOfWeek';
+import type { WeekWorkoutInputRequestStatus } from './weekWorkoutInputRequestStatus';
 
 export interface WeekWorkoutInputRequest {
   weekId: number;
@@ -20,5 +21,6 @@ export interface WeekWorkoutInputRequest {
    * @minimum 1
    */
   orderInTheDay: number;
-  completed: boolean;
+  /** Workout status. Cannot be set on creation — defaults to NOT_STARTED. */
+  status?: WeekWorkoutInputRequestStatus;
 }

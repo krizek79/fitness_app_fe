@@ -12,14 +12,9 @@ export interface WorkoutExerciseSetResponse {
   order?: number;
   workoutExerciseSetType?: ReferenceDataResponse;
   goalRepetitions?: number;
-  actualRepetitions?: number;
   goalWeight?: number;
-  actualWeight?: number;
   goalTimeSeconds?: number;
-  actualTimeSeconds?: number;
   goalDistanceMeters?: number;
-  actualDistanceMeters?: number;
   restDurationSeconds?: number;
-  completed?: boolean;
   note?: string;
 }
