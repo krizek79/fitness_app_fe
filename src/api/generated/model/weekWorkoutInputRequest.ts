@@ -10,8 +10,6 @@ import type { WeekWorkoutInputRequestStatus } from './weekWorkoutInputRequestSta
 
 export interface WeekWorkoutInputRequest {
   weekId: number;
-  /** Should be set only if we want to create a clone from an existing workout template. If workoutToUpdateId is provided, this field is ignored. */
-  workoutToCloneId?: number;
   /** Should be set only if we want to update an already existing workout. (pair with workout) */
   workoutToUpdateId?: number;
   workout?: WorkoutInputRequest;

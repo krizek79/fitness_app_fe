@@ -56,7 +56,7 @@ export function FilteredList<TItem>({
                 contentContainerStyle={{paddingBottom: 88, gap: 12, flexGrow: 1}}
                 ListEmptyComponent={
                     isInitialLoad
-                        ? <>{skeleton}</>
+                        ? <View>{skeleton}</View>
                         : (
                             <EmptyState
                                 icon={emptyIcon}

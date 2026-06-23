@@ -20,7 +20,6 @@ export const updateWeekWorkoutBodyWorkoutDescriptionMax = 1000;
 
 export const updateWeekWorkoutBody = zod.object({
   "weekId": zod.number(),
-  "workoutToCloneId": zod.number().optional().describe('Should be set only if we want to create a clone from an existing workout template. If workoutToUpdateId is provided, this field is ignored.'),
   "workoutToUpdateId": zod.number().optional().describe('Should be set only if we want to update an already existing workout. (pair with workout)'),
   "workout": zod.object({
   "traineeId": zod.number().optional(),
@@ -74,7 +73,6 @@ export const createWeekWorkoutBodyWorkoutDescriptionMax = 1000;
 
 export const createWeekWorkoutBody = zod.object({
   "weekId": zod.number(),
-  "workoutToCloneId": zod.number().optional().describe('Should be set only if we want to create a clone from an existing workout template. If workoutToUpdateId is provided, this field is ignored.'),
   "workoutToUpdateId": zod.number().optional().describe('Should be set only if we want to update an already existing workout. (pair with workout)'),
   "workout": zod.object({
   "traineeId": zod.number().optional(),

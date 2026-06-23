@@ -1,6 +1,6 @@
 import React, {useCallback, useEffect, useRef, useState} from 'react';
-import {View} from 'react-native';
-import {Gesture, GestureDetector} from 'react-native-gesture-handler';
+import {LayoutAnimation, Platform, View} from 'react-native';
+import {Gesture, GestureDetector, type PanGesture} from 'react-native-gesture-handler';
 import Animated, {
     runOnJS,
     useAnimatedStyle,
@@ -15,6 +15,7 @@ export interface SortableListRenderItemParams<T> {
     index: number;
     dataIndex: number;
     isActive: boolean;
+    dragHandleGesture: PanGesture;
 }
 
 interface SortableListProps<T> {
@@ -27,7 +28,7 @@ interface SortableListProps<T> {
 }
 
 interface SortableItemProps {
-    children: React.ReactNode;
+    children: (pan: PanGesture) => React.ReactNode;
     itemIndex: number;
     activeIndexSV: ReturnType<typeof useSharedValue<number>>;
     dragOffsetSV: ReturnType<typeof useSharedValue<number>>;
@@ -89,14 +90,12 @@ function SortableItem({
         });
 
     return (
-        <GestureDetector gesture={pan}>
-            <Animated.View
-                style={[animStyle, {marginBottom: gap}]}
-                onLayout={(e) => onLayout(itemIndex, e.nativeEvent.layout.height)}
-            >
-                {children}
-            </Animated.View>
-        </GestureDetector>
+        <Animated.View
+            style={[animStyle, {marginBottom: gap}]}
+            onLayout={(e) => onLayout(itemIndex, e.nativeEvent.layout.height)}
+        >
+            {children(pan)}
+        </Animated.View>
     );
 }
 
@@ -185,6 +184,12 @@ export function SortableList<T>({
         displayOrderRef.current = newOrder;
         const newNaturalY = getYForOrderIndex(targetOrderIdx);
         naturalOffsetSV.value -= (newNaturalY - prevNaturalY);
+        if (Platform.OS !== 'web') {
+            LayoutAnimation.configureNext({
+                duration: 200,
+                update: {type: LayoutAnimation.Types.easeInEaseOut},
+            });
+        }
         setDisplayOrder(newOrder);
     }, [getYForOrderIndex, getOrderIndexFromRelativeY]);
 
@@ -217,11 +222,12 @@ export function SortableList<T>({
                     onDragEnd={handleDragEnd}
                     gap={gap}
                 >
-                    {renderItem({
+                    {(pan) => renderItem({
                         item: data[dataIdx],
                         index: orderIdx,
                         dataIndex: dataIdx,
                         isActive: activeDataIndex === dataIdx,
+                        dragHandleGesture: pan,
                     })}
                 </SortableItem>
             ))}

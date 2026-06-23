@@ -26,8 +26,7 @@ export const workoutExerciseSetSchema = z.object({
     _backendId: z.number().int().optional(),
     order: z.number().int().positive(),
     workoutExerciseSetType: z.enum(SET_TYPE_VALUES),
-    restDurationSeconds: z.number().min(0).optional(),
-    note: z.string().max(500).optional(),
+    note: z.string().max(500).nullish(),
 });
 
 export const workoutExerciseSchema = z.object({
@@ -38,7 +37,7 @@ export const workoutExerciseSchema = z.object({
     exerciseId: z.number().int(),
     order: z.number().int().positive(),
     workoutExerciseMetric: z.enum(METRIC_VALUES),
-    note: z.string().max(500).optional(),
+    note: z.string().max(500).nullish(),
     workoutExerciseSets: z.array(workoutExerciseSetSchema),
 });
 

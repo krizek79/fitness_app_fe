@@ -1,6 +1,6 @@
-import {useRef, useState} from 'react';
+import {useState} from 'react';
 import {Modal, Platform, Pressable, TextInput, View} from 'react-native';
-import {Control, Controller, useController, useWatch} from 'react-hook-form';
+import {Control, Controller, useWatch} from 'react-hook-form';
 import {Ionicons} from '@expo/vector-icons';
 import {useColorScheme} from 'nativewind';
 import {SET_TYPE_LABELS, SET_TYPE_VALUES} from '@/src/lib/schemas/workouts/workoutCreate';
@@ -13,44 +13,6 @@ interface SetRowProps {
     exerciseIndex: number;
     setIndex: number;
     onRemove: () => void;
-}
-
-function RestInput({control, name}: {
-    control: Control<WorkoutCreateFormValues>;
-    name: `workoutExercises.${number}.workoutExerciseSets.${number}.restDurationSeconds`;
-}) {
-    const {colorScheme} = useColorScheme();
-    const palette = themeColors[colorScheme ?? 'light'];
-    const {field: {onChange, value}} = useController({control, name});
-
-    const [localText, setLocalText] = useState(() => value !== undefined ? String(value) : '');
-    const prevValueRef = useRef(value);
-
-    if (prevValueRef.current !== value) {
-        prevValueRef.current = value;
-        const canonical = value !== undefined ? String(value) : '';
-        if (canonical !== localText) setLocalText(canonical);
-    }
-
-    return (
-        <View className="gap-1" style={{width: 100}}>
-            <Typography variant="caption" className="text-muted-foreground">Rest (s)</Typography>
-            <TextInput
-                value={localText}
-                onChangeText={text => {
-                    setLocalText(text);
-                    const num = parseFloat(text);
-                    onChange(isNaN(num) ? undefined : num);
-                }}
-                placeholder="—"
-                placeholderTextColor={palette.mutedForeground}
-                keyboardType="numeric"
-                scrollEnabled={false}
-                className="rounded-md border border-input bg-background px-3 text-base text-foreground"
-                style={{height: 40}}
-            />
-        </View>
-    );
 }
 
 function SetTypePicker({
@@ -149,10 +111,7 @@ export function SetRow({control, exerciseIndex, setIndex, onRemove}: SetRowProps
                 </Pressable>
             </View>
 
-            {/* Row 2: rest duration */}
-            <RestInput control={control} name={`${base}.restDurationSeconds` as `workoutExercises.${number}.workoutExerciseSets.${number}.restDurationSeconds`}/>
-
-            {/* Row 3: note (optional) */}
+            {/* Row 2: note (optional) */}
             {(noteExpanded || noteValue) && (
                 <Controller
                     control={control}

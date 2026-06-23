@@ -1,6 +1,7 @@
 import {useState} from 'react';
 import {Image, Platform, Pressable, TextInput, View} from 'react-native';
 import {Control, Controller, useController, useFieldArray} from 'react-hook-form';
+import {GestureDetector, type PanGesture} from 'react-native-gesture-handler';
 import {Ionicons} from '@expo/vector-icons';
 import {useColorScheme} from 'nativewind';
 import {METRIC_LABELS} from '@/src/lib/schemas/workouts/workoutCreate';
@@ -16,9 +17,10 @@ interface ExerciseBuilderItemProps {
     exercise: WorkoutExerciseFormValues;
     onRemove: () => void;
     isDragging?: boolean;
+    dragHandleGesture: PanGesture;
 }
 
-export function ExerciseBuilderItem({control, exerciseIndex, exercise, onRemove, isDragging}: ExerciseBuilderItemProps) {
+export function ExerciseBuilderItem({control, exerciseIndex, exercise, onRemove, isDragging, dragHandleGesture}: ExerciseBuilderItemProps) {
     const {colorScheme} = useColorScheme();
     const palette = themeColors[colorScheme ?? 'light'];
 
@@ -47,8 +49,12 @@ export function ExerciseBuilderItem({control, exerciseIndex, exercise, onRemove,
         >
             {/* Header row */}
             <View className="flex-row items-center gap-3 px-4 py-3">
-                {/* Drag handle — visual only; actual drag gesture comes from SortableList wrapper */}
-                <Ionicons name="reorder-three-outline" size={22} color={palette.mutedForeground}/>
+                {/* Drag handle — gesture scoped here so the rest of the card doesn't block scroll */}
+                <GestureDetector gesture={dragHandleGesture}>
+                    <View hitSlop={12} style={{padding: 4}}>
+                        <Ionicons name="reorder-three-outline" size={22} color={palette.mutedForeground}/>
+                    </View>
+                </GestureDetector>
 
                 <View className="bg-muted items-center justify-center overflow-hidden" style={{width: 40, height: 40, borderRadius: 8}}>
                     {exercise._exerciseThumbnailUrl ? (

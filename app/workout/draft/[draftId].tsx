@@ -1,11 +1,11 @@
 import {useCallback, useEffect, useRef, useState} from 'react';
-import {Platform, Pressable, ScrollView, TextInput, View} from 'react-native';
+import {ActivityIndicator, Platform, Pressable, ScrollView, TextInput, View} from 'react-native';
 import {useLocalSearchParams, useRouter} from 'expo-router';
 import {Controller, useFieldArray, useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {Ionicons} from '@expo/vector-icons';
 import {useColorScheme} from 'nativewind';
-import {useCreateWorkout} from '@/src/api/generated/workout/workout';
+import {useCreateWorkout, getWorkoutById} from '@/src/api/generated/workout/workout';
 import {DraftCreateRequestEntityType} from '@/src/api/generated/model/draftCreateRequestEntityType';
 import type {WorkoutInputRequest} from '@/src/api/generated/model';
 import {WorkoutExerciseInputRequestWorkoutExerciseMetric} from '@/src/api/generated/model/workoutExerciseInputRequestWorkoutExerciseMetric';
@@ -27,6 +27,8 @@ import {DetailLayout, webContentStyle} from '@/src/components/primitives/layout/
 import {TagInputField} from '@/src/components/workouts/TagInputField';
 import {ExercisePickerModal} from '@/src/components/workouts/ExercisePickerModal';
 import {ExerciseBuilderItem} from '@/src/components/workouts/ExerciseBuilderItem';
+import {TemplatePickerModal} from '@/src/components/workouts/TemplatePickerModal';
+import {cloneWorkoutToFormValues} from '@/src/lib/workoutClone';
 import {SortableList} from '@/src/components/primitives/ui/SortableList';
 import {themeColors} from '@/src/constants/colors';
 import {cn} from '@/src/lib/utils';
@@ -61,6 +63,8 @@ export default function WorkoutDraftScreen() {
 
     const [step, setStep] = useState<'1' | '2'>('1');
     const [exercisePickerOpen, setExercisePickerOpen] = useState(false);
+    const [templatePickerOpen, setTemplatePickerOpen] = useState(false);
+    const [isCloningTemplate, setIsCloningTemplate] = useState(false);
     const [draftLoaded, setDraftLoaded] = useState(numericDraftId === null);
 
     const {control, handleSubmit, reset, setValue, watch, getValues, formState: {errors}} = useForm<WorkoutCreateFormValues>({
@@ -94,6 +98,18 @@ export default function WorkoutDraftScreen() {
             setDraftLoaded(true);
         },
     });
+
+    async function handleCloneTemplate(templateId: number) {
+        setIsCloningTemplate(true);
+        try {
+            const detail = await getWorkoutById(templateId);
+            reset(cloneWorkoutToFormValues(detail));
+        } catch {
+            toast.error('Failed to load template. Please try again.');
+        } finally {
+            setIsCloningTemplate(false);
+        }
+    }
 
     // Auto-save via watch(callback) — does NOT cause re-renders of this component
     const saveTimerRef = useRef<ReturnType<typeof setTimeout>>(undefined);
@@ -137,7 +153,6 @@ export default function WorkoutDraftScreen() {
                 workoutExerciseSets: ex.workoutExerciseSets.map((s, si) => ({
                     order: si + 1,
                     workoutExerciseSetType: s.workoutExerciseSetType as WorkoutExerciseSetInputRequestWorkoutExerciseSetType,
-                    restDurationSeconds: s.restDurationSeconds,
                     note: s.note || undefined,
                 })),
             })),
@@ -178,6 +193,21 @@ export default function WorkoutDraftScreen() {
                         contentContainerStyle={{padding: 24, gap: 20, ...webContentStyle}}
                         keyboardShouldPersistTaps="handled"
                     >
+                        {/* Clone from template */}
+                        <Pressable
+                            onPress={() => setTemplatePickerOpen(true)}
+                            disabled={isCloningTemplate}
+                            className="flex-row items-center gap-2 rounded-xl border-2 border-primary px-4 py-3"
+                        >
+                            {isCloningTemplate
+                                ? <ActivityIndicator size="small" color={palette.primary}/>
+                                : <Ionicons name="copy-outline" size={18} color={palette.primary}/>
+                            }
+                            <Typography variant="body-sm" style={{color: palette.primary}}>
+                                {isCloningTemplate ? 'Loading template…' : 'Clone from template'}
+                            </Typography>
+                        </Pressable>
+
                         <Controller
                             control={control}
                             name="title"
@@ -285,12 +315,13 @@ export default function WorkoutDraftScreen() {
                                 keyExtractor={item => item._stableId || item.id}
                                 gap={12}
                                 onReorder={handleReorder}
-                                renderItem={({item, dataIndex}) => (
+                                renderItem={({item, dataIndex, dragHandleGesture}) => (
                                     <ExerciseBuilderItem
                                         control={control}
                                         exerciseIndex={dataIndex}
                                         exercise={item}
                                         onRemove={() => remove(dataIndex)}
+                                        dragHandleGesture={dragHandleGesture}
                                     />
                                 )}
                             />
@@ -313,13 +344,42 @@ export default function WorkoutDraftScreen() {
                 >
                     <Button
                         label={isTemplate ? 'Create Template' : 'Create Workout'}
-                        onPress={handleSubmit(onSubmit, () => {
-                            toast.error('Please fix the form errors before submitting.');
+                        onPress={handleSubmit(onSubmit, (errors) => {
+                            if (__DEV__) console.log('[workout form errors]', JSON.stringify(errors, null, 2));
+                            const hasDetailErrors = !!(errors.title || errors.description || errors.weightUnit || errors.distanceUnit || errors.tags);
+                            const hasExerciseErrors = !!errors.workoutExercises;
+                            if (hasDetailErrors) {
+                                setStep('1');
+                                const first = errors.title?.message || errors.description?.message;
+                                toast.error(first ?? 'Fix the errors on the Details tab.');
+                            } else if (hasExerciseErrors) {
+                                setStep('2');
+                                const exErrors = Array.isArray(errors.workoutExercises) ? errors.workoutExercises : [];
+                                let firstMsg: string | undefined;
+                                let firstIdx: number | undefined;
+                                for (let i = 0; i < exErrors.length; i++) {
+                                    const exErr = exErrors[i];
+                                    if (!exErr) continue;
+                                    const setErrors = Array.isArray(exErr.workoutExerciseSets) ? exErr.workoutExerciseSets : [];
+                                    const setMsg = setErrors.flatMap((s: Record<string, {message?: string} | undefined> | undefined) => s ? [s.workoutExerciseSetType?.message, s.note?.message, s.order?.message] : []).find(Boolean);
+                                    firstMsg = exErr.exerciseId?.message || exErr.workoutExerciseMetric?.message || exErr.note?.message || setMsg;
+                                    if (firstMsg) { firstIdx = i; break; }
+                                }
+                                toast.error(firstMsg ? `Exercise ${(firstIdx ?? 0) + 1}: ${firstMsg}` : 'Fix the errors in your exercises.');
+                            } else {
+                                toast.error('Please fix the form errors before submitting.');
+                            }
                         })}
                         loading={isPending}
                     />
                 </View>
             </View>
+
+            <TemplatePickerModal
+                visible={templatePickerOpen}
+                onClose={() => setTemplatePickerOpen(false)}
+                onSelect={handleCloneTemplate}
+            />
 
             <ExercisePickerModal
                 visible={exercisePickerOpen}

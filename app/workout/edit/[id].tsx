@@ -65,7 +65,6 @@ function workoutToFormValues(workout: WorkoutDetailResponse): WorkoutCreateFormV
                 _backendId: s.id,
                 order: s.order ?? 1,
                 workoutExerciseSetType: (s.workoutExerciseSetType?.key as WorkoutCreateFormValues['workoutExercises'][number]['workoutExerciseSets'][number]['workoutExerciseSetType']) ?? 'STRAIGHT_SET',
-                restDurationSeconds: s.restDurationSeconds ?? undefined,
                 note: s.note ?? undefined,
             })),
         })),
@@ -125,7 +124,6 @@ export default function WorkoutEditScreen() {
                     id: s._backendId,
                     order: si + 1,
                     workoutExerciseSetType: s.workoutExerciseSetType as WorkoutExerciseSetInputRequestWorkoutExerciseSetType,
-                    restDurationSeconds: s.restDurationSeconds,
                     note: s.note || undefined,
                 })),
             })),
@@ -276,12 +274,13 @@ export default function WorkoutEditScreen() {
                                 keyExtractor={item => item._stableId || item.id}
                                 gap={12}
                                 onReorder={handleReorder}
-                                renderItem={({item, dataIndex}) => (
+                                renderItem={({item, dataIndex, dragHandleGesture}) => (
                                     <ExerciseBuilderItem
                                         control={control}
                                         exerciseIndex={dataIndex}
                                         exercise={item}
                                         onRemove={() => remove(dataIndex)}
+                                        dragHandleGesture={dragHandleGesture}
                                     />
                                 )}
                             />
