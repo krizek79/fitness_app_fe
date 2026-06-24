@@ -81,12 +81,13 @@ export default function WorkoutEditScreen() {
     const [step, setStep] = useState<'1' | '2'>('1');
     const [exercisePickerOpen, setExercisePickerOpen] = useState(false);
     const [formReady, setFormReady] = useState(false);
+    const [isDragging, setIsDragging] = useState(false);
 
     const queryClient = useQueryClient();
     const {data: workout, isLoading} = useGetWorkoutById(workoutId);
     const {mutate: updateWorkout, isPending} = useUpdateWorkout();
 
-    const {control, handleSubmit, reset, formState: {errors}} = useForm<WorkoutCreateFormValues>({
+    const {control, handleSubmit, reset, getValues, formState: {errors}} = useForm<WorkoutCreateFormValues>({
         resolver: zodResolver(workoutCreateSchema),
         defaultValues: WORKOUT_CREATE_DEFAULTS,
         mode: 'onBlur',
@@ -145,8 +146,12 @@ export default function WorkoutEditScreen() {
     }
 
     const handleReorder = useCallback((reordered: typeof exercises) => {
-        replace(reordered.map((ex, i) => ({...ex, order: i + 1})));
-    }, [replace]);
+        const currentValues = getValues('workoutExercises');
+        replace(reordered.map((field, i) => {
+            const current = currentValues.find(v => v._stableId === field._stableId) ?? field;
+            return {...current, order: i + 1};
+        }));
+    }, [replace, getValues]);
 
     if (isLoading || !formReady) {
         return (
@@ -262,6 +267,7 @@ export default function WorkoutEditScreen() {
                         className="flex-1"
                         contentContainerStyle={{padding: 24, gap: 16, paddingBottom: 24, ...webContentStyle}}
                         keyboardShouldPersistTaps="handled"
+                        scrollEnabled={!isDragging}
                     >
                         {exercises.length === 0 ? (
                             <View className="items-center py-16 gap-3">
@@ -274,6 +280,7 @@ export default function WorkoutEditScreen() {
                                 keyExtractor={item => item._stableId || item.id}
                                 gap={12}
                                 onReorder={handleReorder}
+                                onDragStateChange={setIsDragging}
                                 renderItem={({item, dataIndex, dragHandleGesture}) => (
                                     <ExerciseBuilderItem
                                         control={control}

@@ -61,7 +61,7 @@ function goalSummary(set: WorkoutExerciseSetResponse, metric: string): string {
         parts.push(`${set.goalDistanceMeters}m`);
     }
     if (set.restDurationSeconds != null) parts.push(`${set.restDurationSeconds}s rest`);
-    return parts.join(' × ') || '—';
+    return parts.join(' × ');
 }
 
 const THUMB_SIZE = 48;
