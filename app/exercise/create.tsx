@@ -153,7 +153,7 @@ export default function CreateExerciseScreen() {
                         name="requiredEquipmentIds"
                         render={({field: {value, onChange}}) => (
                             <EquipmentPickerField
-                                label="Required Equipment"
+                                label="Equipment"
                                 value={value}
                                 onChange={onChange}
                                 error={errors.requiredEquipmentIds?.message}

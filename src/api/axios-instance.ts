@@ -137,6 +137,9 @@ function processQueue(error: unknown, token: string | null) {
 AXIOS_INSTANCE.interceptors.response.use(
     (response: AxiosResponse) => response,
     async (error: AxiosError) => {
+        // Silently swallow requests aborted by navigation or component unmount.
+        if (axios.isCancel(error)) return Promise.reject(error);
+
         const originalRequest = error.config as InternalAxiosRequestConfig & { _retry?: boolean };
 
         // Let the refresh logic below handle 401. For everything else, show a toast.

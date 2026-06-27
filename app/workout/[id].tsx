@@ -55,16 +55,33 @@ function goalSummary(set: WorkoutExerciseSetResponse, metric: string): string {
         parts.push(`${set.goalWeight} kg`);
     }
     if ((metric === 'TIME' || metric === 'TIME_AND_WEIGHT' || metric === 'DISTANCE_AND_TIME') && set.goalTimeSeconds != null) {
-        parts.push(`${set.goalTimeSeconds}s`);
+        const m = Math.floor(set.goalTimeSeconds / 60);
+        const s = set.goalTimeSeconds % 60;
+        parts.push(m > 0 ? (s > 0 ? `${m}m ${s}s` : `${m} min`) : `${s}s`);
     }
     if ((metric === 'DISTANCE' || metric === 'DISTANCE_AND_TIME') && set.goalDistanceMeters != null) {
         parts.push(`${set.goalDistanceMeters}m`);
     }
-    if (set.restDurationSeconds != null) parts.push(`${set.restDurationSeconds}s rest`);
-    return parts.join(' × ');
+    if (set.restDurationSeconds != null) {
+        const m = Math.floor(set.restDurationSeconds / 60);
+        const s = set.restDurationSeconds % 60;
+        parts.push(`${m > 0 ? (s > 0 ? `${m}m ${s}s` : `${m} min`) : `${s}s`} rest`);
+    }
+    return parts.join(' · ');
 }
 
-const THUMB_SIZE = 48;
+function estimateDurationMins(exercises: WorkoutExerciseResponse[]): number {
+    let secs = 0;
+    for (const ex of exercises) {
+        for (const s of ex.workoutExerciseSets ?? []) {
+            secs += (s.goalTimeSeconds ?? 45);
+            secs += (s.restDurationSeconds ?? 90);
+        }
+    }
+    return Math.round(secs / 60);
+}
+
+const THUMB_SIZE = 40;
 
 function ExerciseThumbnail({url}: {url?: string}) {
     return (
@@ -77,7 +94,7 @@ function ExerciseThumbnail({url}: {url?: string}) {
                     <Image source={{uri: url}} style={{width: THUMB_SIZE, height: THUMB_SIZE}} resizeMode="cover"/>
                 )
             ) : (
-                <Ionicons name="barbell-outline" size={22} color="#9ca3af"/>
+                <Ionicons name="barbell-outline" size={20} color="#9ca3af"/>
             )}
         </View>
     );
@@ -87,41 +104,51 @@ function ExerciseCard({exercise}: {exercise: WorkoutExerciseResponse}) {
     const metric = exercise.workoutExerciseMetric?.key ?? 'REPS';
     const metricLabel = METRIC_LABELS[metric as keyof typeof METRIC_LABELS] ?? metric;
     const thumbnailUrl = exercise.exercise?.thumbnailUrl;
+    const sets = exercise.workoutExerciseSets ?? [];
 
     return (
         <Card padding="md" className="gap-3">
+            {/* Header row: thumbnail + name + metric badge */}
             <View className="flex-row items-center gap-3">
                 <ExerciseThumbnail url={thumbnailUrl}/>
-                <View className="flex-1 flex-row items-center justify-between">
-                    <Typography variant="body" className="font-semibold text-foreground flex-1 mr-2">
+                <View className="flex-1">
+                    <Typography variant="body" className="font-semibold text-foreground">
                         {exercise.exercise?.title ?? 'Exercise'}
                     </Typography>
                     <Badge label={metricLabel} variant="muted"/>
                 </View>
             </View>
 
-            {(exercise.workoutExerciseSets ?? []).map((s, i) => {
-                const typeKey = s.workoutExerciseSetType?.key as keyof typeof SET_TYPE_LABELS | undefined;
-                const typeLabel = (typeKey && SET_TYPE_LABELS[typeKey]) ?? s.workoutExerciseSetType?.value ?? '';
-                return (
-                    <View key={s.id ?? i} className="flex-row items-center gap-3">
-                        <View className="w-5 h-5 rounded-full bg-muted items-center justify-center">
-                            <Typography variant="caption" className="font-bold text-muted-foreground text-xs">
-                                {i + 1}
-                            </Typography>
-                        </View>
-                        <View className="rounded-full bg-muted px-2" style={{paddingVertical: 2}}>
-                            <Typography variant="caption" className="text-foreground">{typeLabel}</Typography>
-                        </View>
-                        <Typography variant="caption" className="text-muted-foreground flex-1">
-                            {goalSummary(s, metric)}
-                        </Typography>
-                    </View>
-                );
-            })}
+            {/* Sets */}
+            {sets.length > 0 && (
+                <View style={{gap: 4, paddingLeft: THUMB_SIZE + 12}}>
+                    {sets.map((s, i) => {
+                        const typeKey = s.workoutExerciseSetType?.key as keyof typeof SET_TYPE_LABELS | undefined;
+                        const typeLabel = (typeKey && SET_TYPE_LABELS[typeKey]) ?? s.workoutExerciseSetType?.value ?? '';
+                        const summary = goalSummary(s, metric);
+                        return (
+                            <View key={s.id ?? i} className="flex-row items-center gap-2">
+                                <View className="w-4 h-4 rounded-full bg-muted items-center justify-center" style={{flexShrink: 0}}>
+                                    <Typography variant="caption" className="font-bold text-muted-foreground" style={{fontSize: 9}}>
+                                        {i + 1}
+                                    </Typography>
+                                </View>
+                                <View className="rounded-full bg-muted px-2" style={{paddingVertical: 1}}>
+                                    <Typography variant="caption" className="text-foreground" style={{fontSize: 11}}>{typeLabel}</Typography>
+                                </View>
+                                {summary ? (
+                                    <Typography variant="caption" className="text-muted-foreground flex-1" style={{fontSize: 11}}>
+                                        {summary}
+                                    </Typography>
+                                ) : null}
+                            </View>
+                        );
+                    })}
+                </View>
+            )}
 
             {exercise.note && (
-                <Typography variant="caption" className="text-muted-foreground italic">
+                <Typography variant="caption" className="text-muted-foreground italic" style={{paddingLeft: THUMB_SIZE + 12}}>
                     {exercise.note}
                 </Typography>
             )}
@@ -132,14 +159,18 @@ function ExerciseCard({exercise}: {exercise: WorkoutExerciseResponse}) {
 function WorkoutDetailSkeleton() {
     return (
         <SkeletonGroup gap={16}>
-            <Skeleton height={24} width="70%" rounded="md"/>
-            <Skeleton height={14} width="45%" rounded="md"/>
-            <Skeleton height={60} width="100%" rounded="xl"/>
+            <Skeleton height={100} width="100%" rounded="lg"/>
             {Array.from({length: 3}).map((_, i) => (
                 <View key={i} className="rounded-lg border border-border bg-card p-4 gap-3">
-                    <Skeleton height={18} width="55%" rounded="md"/>
-                    <Skeleton height={13} width="80%" rounded="md"/>
-                    <Skeleton height={13} width="65%" rounded="md"/>
+                    <View className="flex-row items-center gap-3">
+                        <Skeleton height={40} width={40} rounded="md"/>
+                        <View className="flex-1 gap-2">
+                            <Skeleton height={14} width="55%" rounded="md"/>
+                            <Skeleton height={11} width="30%" rounded="md"/>
+                        </View>
+                    </View>
+                    <Skeleton height={11} width="80%" rounded="md"/>
+                    <Skeleton height={11} width="65%" rounded="md"/>
                 </View>
             ))}
         </SkeletonGroup>
@@ -304,45 +335,56 @@ export default function WorkoutDetailScreen() {
                         <WorkoutDetailSkeleton/>
                     ) : (
                         <>
-                            {/* Meta */}
-                            <View className="gap-2">
-                                <View className="flex-row gap-3">
-                                    {workout?.author?.name && (
-                                        <View className="flex-row items-center gap-1">
-                                            <Typography variant="caption" className="text-muted-foreground">By</Typography>
-                                            <Typography variant="caption" className="text-foreground">{workout.author.name}</Typography>
+                            {/* Hero card */}
+                            <Card padding="md" className="gap-4">
+                                {/* Tags + author/trainee */}
+                                <View className="gap-3">
+                                    {tags.length > 0 && (
+                                        <View className="flex-row flex-wrap gap-2">
+                                            {tags.map(t => <Badge key={t.id} label={t.name ?? ''} variant="muted"/>)}
                                         </View>
                                     )}
-                                    {workout?.trainee?.name && (
-                                        <View className="flex-row items-center gap-1">
-                                            <Typography variant="caption" className="text-muted-foreground">For</Typography>
-                                            <Typography variant="caption" className="text-foreground">{workout.trainee.name}</Typography>
+                                    {(workout?.author?.name || workout?.trainee?.name) && (
+                                        <View className="flex-row flex-wrap gap-4">
+                                            {workout?.author?.name && (
+                                                <View className="flex-row items-center gap-1">
+                                                    <Typography variant="caption" className="text-muted-foreground">By</Typography>
+                                                    <Typography variant="caption" className="text-foreground">{workout.author.name}</Typography>
+                                                </View>
+                                            )}
+                                            {workout?.trainee?.name && (
+                                                <View className="flex-row items-center gap-1">
+                                                    <Typography variant="caption" className="text-muted-foreground">For</Typography>
+                                                    <Typography variant="caption" className="text-foreground">{workout.trainee.name}</Typography>
+                                                </View>
+                                            )}
                                         </View>
+                                    )}
+                                    {workout?.description && (
+                                        <Typography variant="body-sm" className="text-muted-foreground">
+                                            {workout.description}
+                                        </Typography>
                                     )}
                                 </View>
-                                {tags.length > 0 && (
-                                    <View className="flex-row flex-wrap gap-1">
-                                        {tags.map(t => <Badge key={t.id} label={t.name ?? ''} variant="muted"/>)}
-                                    </View>
-                                )}
-                                {workout?.description && (
-                                    <Typography variant="body-sm" className="text-muted-foreground">
-                                        {workout.description}
-                                    </Typography>
-                                )}
-                            </View>
 
-                            {/* Units */}
-                            {(workout?.weightUnit || workout?.distanceUnit) && (
-                                <View className="flex-row gap-2">
-                                    {workout.weightUnit && (
-                                        <Badge label={workout.weightUnit.value ?? ''} variant="muted"/>
-                                    )}
-                                    {workout.distanceUnit && (
-                                        <Badge label={workout.distanceUnit.value ?? ''} variant="muted"/>
-                                    )}
+                                {/* Stat row */}
+                                <View className="flex-row gap-3">
+                                    <View className="flex-1 bg-muted rounded-lg items-center py-2">
+                                        <Typography variant="body" className="font-semibold text-foreground">{exercises.length}</Typography>
+                                        <Typography variant="caption" className="text-muted-foreground" style={{fontSize: 10}}>exercises</Typography>
+                                    </View>
+                                    <View className="flex-1 bg-muted rounded-lg items-center py-2">
+                                        <Typography variant="body" className="font-semibold text-foreground">
+                                            {exercises.reduce((acc, ex) => acc + (ex.workoutExerciseSets?.length ?? 0), 0)}
+                                        </Typography>
+                                        <Typography variant="caption" className="text-muted-foreground" style={{fontSize: 10}}>sets</Typography>
+                                    </View>
+                                    <View className="flex-1 bg-muted rounded-lg items-center py-2">
+                                        <Typography variant="body" className="font-semibold text-foreground">~{estimateDurationMins(exercises)}m</Typography>
+                                        <Typography variant="caption" className="text-muted-foreground" style={{fontSize: 10}}>est. time</Typography>
+                                    </View>
                                 </View>
-                            )}
+                            </Card>
 
                             {/* Exercises */}
                             {exercises.length > 0 && (
@@ -359,14 +401,14 @@ export default function WorkoutDetailScreen() {
                                 <View className="gap-3">
                                     <Heading level="h5">History</Heading>
                                     {isSessionsLoading ? (
-                                        <View className="gap-2">
+                                        <Card padding="md" className="gap-3">
                                             {Array.from({length: 3}).map((_, i) => (
-                                                <View key={i} className="rounded-lg border border-border bg-card p-4 gap-2">
-                                                    <Skeleton height={14} width="50%" rounded="md"/>
-                                                    <Skeleton height={12} width="35%" rounded="md"/>
+                                                <View key={i} className="gap-1">
+                                                    <Skeleton height={13} width="50%" rounded="md"/>
+                                                    <Skeleton height={11} width="30%" rounded="md"/>
                                                 </View>
                                             ))}
-                                        </View>
+                                        </Card>
                                     ) : sessions.length === 0 ? (
                                         <View className="flex-row items-center gap-2 py-2">
                                             <Ionicons name="time-outline" size={16} color="#9ca3af"/>
@@ -375,51 +417,52 @@ export default function WorkoutDetailScreen() {
                                             </Typography>
                                         </View>
                                     ) : (
-                                        <View className="gap-2">
-                                            {sessions.map(s => {
+                                        <Card padding="none" className="overflow-hidden">
+                                            {sessions.map((s, idx) => {
                                                 const duration = formatDuration(s.startedAt, s.finishedAt);
+                                                const isLast = idx === sessions.length - 1;
                                                 return (
-                                                    <Card
+                                                    <Pressable
                                                         key={s.id}
-                                                        padding="md"
-                                                        className="gap-1"
                                                         onPress={() => router.push({
                                                             // eslint-disable-next-line @typescript-eslint/no-explicit-any
                                                             pathname: '/workout-session/[id]' as any,
                                                             params: {id: s.id!},
                                                         })}
+                                                        className="px-4 active:bg-muted"
+                                                        style={[{paddingVertical: 14}, !isLast ? {borderBottomWidth: 0.5, borderBottomColor: 'rgba(0,0,0,0.08)'} : undefined]}
                                                     >
                                                         <View className="flex-row items-center justify-between">
-                                                            <Typography variant="body-sm" className="text-foreground font-medium">
-                                                                {formatDate(s.startedAt)}
-                                                            </Typography>
-                                                            <Badge
-                                                                label={sessionStatusLabel(s.status)}
-                                                                variant={sessionStatusVariant(s.status)}
-                                                            />
-                                                        </View>
-                                                        {duration && (
-                                                            <View className="flex-row items-center gap-1">
-                                                                <Ionicons name="time-outline" size={12} color="#9ca3af"/>
-                                                                <Typography variant="caption" className="text-muted-foreground">
-                                                                    {duration}
+                                                            <View className="gap-1">
+                                                                <Typography variant="body-sm" className="font-medium text-foreground">
+                                                                    {formatDate(s.startedAt)}
                                                                 </Typography>
+                                                                {duration && (
+                                                                    <View className="flex-row items-center gap-1">
+                                                                        <Ionicons name="time-outline" size={13} color="#9ca3af"/>
+                                                                        <Typography variant="caption" className="text-muted-foreground">
+                                                                            {duration}
+                                                                        </Typography>
+                                                                    </View>
+                                                                )}
                                                             </View>
-                                                        )}
-                                                    </Card>
+                                                            <View className="flex-row items-center gap-2">
+                                                                <Badge
+                                                                    label={sessionStatusLabel(s.status)}
+                                                                    variant={sessionStatusVariant(s.status)}
+                                                                />
+                                                                <Ionicons name="chevron-forward" size={16} color="#9ca3af"/>
+                                                            </View>
+                                                        </View>
+                                                    </Pressable>
                                                 );
                                             })}
                                             {isSessionsPending && sessions.length > 0 && (
-                                                <View className="gap-2">
-                                                    {Array.from({length: 2}).map((_, i) => (
-                                                        <View key={i} className="rounded-lg border border-border bg-card p-4 gap-2">
-                                                            <Skeleton height={14} width="50%" rounded="md"/>
-                                                            <Skeleton height={12} width="35%" rounded="md"/>
-                                                        </View>
-                                                    ))}
+                                                <View className="px-4 py-3 gap-2">
+                                                    <Skeleton height={13} width="50%" rounded="md"/>
                                                 </View>
                                             )}
-                                        </View>
+                                        </Card>
                                     )}
                                 </View>
                             )}

@@ -1,5 +1,5 @@
 import {useEffect, useRef, useState} from 'react';
-import {Alert, Image, KeyboardAvoidingView, Platform, Pressable, RefreshControl, ScrollView, TextInput, View} from 'react-native';
+import {Alert, Image, KeyboardAvoidingView, Platform, Pressable, ScrollView, TextInput, View} from 'react-native';
 import {useLocalSearchParams, useRouter} from 'expo-router';
 import {Ionicons} from '@expo/vector-icons';
 import {
@@ -40,6 +40,16 @@ interface LocalSetResult {
     note?: string;
 }
 
+interface MuscleInfo {
+    name: string;
+    role: 'PRIMARY' | 'SECONDARY' | string;
+}
+
+interface EquipmentInfo {
+    title: string;
+    thumbnailUrl?: string;
+}
+
 interface LocalExercise {
     id?: number;
     workoutExerciseId: number;
@@ -49,33 +59,47 @@ interface LocalExercise {
     metric: string;
     note?: string;
     sets: LocalSetResult[];
+    equipment: EquipmentInfo[];
+    movementPatterns: string[];
+    muscles: MuscleInfo[];
 }
 
 // ── Mapping helpers ──────────────────────────────────────────────────────────
 
 function mapToLocal(session: WorkoutSessionDetailResponse): LocalExercise[] {
-    return (session.workoutExerciseSessions ?? []).map(ex => ({
-        id: ex.id,
-        workoutExerciseId: ex.workoutExercise?.id!,
-        order: ex.order!,
-        exerciseName: ex.workoutExercise?.exercise?.title ?? 'Exercise',
-        thumbnailUrl: ex.workoutExercise?.exercise?.thumbnailUrl,
-        metric: ex.workoutExercise?.workoutExerciseMetric?.key ?? 'REPS',
-        note: ex.note,
-        sets: (ex.workoutExerciseSetResults ?? []).map(s => ({
-            id: s.id,
-            workoutExerciseSetId: s.workoutExerciseSetId,
-            order: s.order!,
-            workoutExerciseSetType: s.workoutExerciseSetType?.key ?? 'STRAIGHT_SET',
-            repetitions: s.repetitions,
-            weight: s.weight,
-            timeSeconds: s.timeSeconds,
-            distanceMeters: s.distanceMeters,
-            restDurationSeconds: s.restDurationSeconds,
-            completed: s.completed ?? false,
-            note: s.note,
-        })),
-    }));
+    return (session.workoutExerciseSessions ?? []).map(ex => {
+        const exercise = ex.workoutExercise?.exercise;
+        return {
+            id: ex.id,
+            workoutExerciseId: ex.workoutExercise?.id!,
+            order: ex.order!,
+            exerciseName: exercise?.title ?? 'Exercise',
+            thumbnailUrl: exercise?.thumbnailUrl,
+            metric: ex.workoutExercise?.workoutExerciseMetric?.key ?? 'REPS',
+            note: ex.note,
+            equipment: (exercise?.requiredEquipment ?? [])
+                .filter(e => e.title)
+                .map(e => ({title: e.title!, thumbnailUrl: e.thumbnailUrl})),
+            movementPatterns: (exercise?.movementPatterns ?? []).map(p => p.value ?? '').filter(Boolean),
+            muscles: (exercise?.muscles ?? []).map(m => ({
+                name: m.muscle?.value ?? '',
+                role: m.type?.key ?? 'PRIMARY',
+            })).filter(m => m.name),
+            sets: (ex.workoutExerciseSetResults ?? []).map(s => ({
+                id: s.id,
+                workoutExerciseSetId: s.workoutExerciseSetId,
+                order: s.order!,
+                workoutExerciseSetType: s.workoutExerciseSetType?.key ?? 'STRAIGHT_SET',
+                repetitions: s.repetitions,
+                weight: s.weight,
+                timeSeconds: s.timeSeconds,
+                distanceMeters: s.distanceMeters,
+                restDurationSeconds: s.restDurationSeconds,
+                completed: s.completed ?? false,
+                note: s.note,
+            })),
+        };
+    });
 }
 
 function buildUpdateBody(
@@ -85,7 +109,7 @@ function buildUpdateBody(
     finishedAt?: string,
 ): WorkoutSessionInputRequest {
     return {
-        workoutId: undefined as unknown as number, // must be omitted on update per API contract
+        workoutId: undefined as unknown as number,
         status,
         startedAt: session.startedAt,
         finishedAt: finishedAt ?? session.finishedAt ?? undefined,
@@ -133,14 +157,14 @@ function statusBadgeLabel(status?: string): string {
 function SessionSkeleton() {
     return (
         <SkeletonGroup gap={16}>
-            <Skeleton height={22} width="60%" rounded="md"/>
-            {Array.from({length: 3}).map((_, i) => (
-                <View key={i} className="rounded-lg border border-border bg-card p-4 gap-3">
-                    <Skeleton height={18} width="50%" rounded="md"/>
-                    <Skeleton height={40} width="100%" rounded="md"/>
-                    <Skeleton height={40} width="100%" rounded="md"/>
-                </View>
-            ))}
+            <Skeleton height={6} width="100%" rounded="md"/>
+            <Skeleton height={22} width="50%" rounded="md"/>
+            <Skeleton height={16} width="70%" rounded="md"/>
+            <View className="gap-3">
+                {Array.from({length: 3}).map((_, i) => (
+                    <Skeleton key={i} height={72} width="100%" rounded="md"/>
+                ))}
+            </View>
         </SkeletonGroup>
     );
 }
@@ -207,6 +231,40 @@ function ExerciseNoteInput({value, onChange, readOnly}: {value: string; onChange
     );
 }
 
+// ── Info pill ─────────────────────────────────────────────────────────────────
+
+function InfoPill({label, color}: {label: string; color: 'blue' | 'teal' | 'rose' | 'indigo'}) {
+    const styles: Record<string, {bg: string; text: string}> = {
+        blue:   {bg: 'rgba(55,138,221,0.12)',  text: '#0C447C'},
+        teal:   {bg: 'rgba(29,158,117,0.12)',  text: '#085041'},
+        rose:   {bg: 'rgba(244,63,94,0.13)',   text: '#9F1239'},
+        indigo: {bg: 'rgba(99,102,241,0.12)',  text: '#3730A3'},
+    };
+    const s = styles[color];
+    return (
+        <View
+            className="rounded-full px-3 flex-row items-center"
+            style={{paddingVertical: 4, backgroundColor: s.bg}}
+        >
+            <Typography variant="caption" style={{color: s.text, fontSize: 11}}>{label}</Typography>
+        </View>
+    );
+}
+
+// ── Progress bar ──────────────────────────────────────────────────────────────
+
+function ProgressBar({current, total}: {current: number; total: number}) {
+    const pct = total > 0 ? ((current + 1) / total) * 100 : 0;
+    return (
+        <View className="bg-muted" style={{height: 4}}>
+            <View
+                className="bg-primary"
+                style={{height: 4, width: `${pct}%`}}
+            />
+        </View>
+    );
+}
+
 // ── Screen ────────────────────────────────────────────────────────────────────
 
 export default function WorkoutSessionScreen() {
@@ -216,14 +274,14 @@ export default function WorkoutSessionScreen() {
     const {colorScheme} = useColorScheme();
     const palette = themeColors[colorScheme ?? 'light'];
 
-    const {data: session, isLoading, refetch, isRefetching} = useGetWorkoutSessionById(sessionId);
+    const {data: session, isLoading, refetch} = useGetWorkoutSessionById(sessionId);
     const {mutate: saveSession} = useUpdateWorkoutSession();
     const {mutate: deleteSession, isPending: isDeleting} = useDeleteWorkoutSession();
 
     const [exercises, setExercises] = useState<LocalExercise[]>([]);
     const [sessionStatus, setSessionStatus] = useState<SessionStatus>(WorkoutSessionInputRequestStatus.IN_PROGRESS);
+    const [currentIndex, setCurrentIndex] = useState(0);
 
-    // Populated once on first successful fetch; re-populates if the id changes
     const initializedRef = useRef(false);
     const dirtyRef = useRef(false);
     const saveTimerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
@@ -235,7 +293,8 @@ export default function WorkoutSessionScreen() {
         initializedRef.current = true;
     }, [session]);
 
-    // Auto-save whenever exercises or status change (but not on initial population)
+    const isReadOnly = session?.status === 'COMPLETED' || session?.status === 'SKIPPED';
+
     useEffect(() => {
         if (!dirtyRef.current || !session || isReadOnly) return;
         clearTimeout(saveTimerRef.current);
@@ -246,9 +305,7 @@ export default function WorkoutSessionScreen() {
             );
         }, 1500);
         return () => clearTimeout(saveTimerRef.current);
-    }, [exercises, sessionStatus]);
-
-    const isReadOnly = session?.status === 'COMPLETED' || session?.status === 'SKIPPED';
+    }, [exercises, sessionStatus, isReadOnly]);
 
     // ── Set result mutations ──────────────────────────────────────────────────
 
@@ -274,6 +331,15 @@ export default function WorkoutSessionScreen() {
             prev.map((ex, ei) => (ei !== exIdx ? ex : {...ex, note: note || undefined})),
         );
     }
+
+    // ── Navigation ────────────────────────────────────────────────────────────
+
+    const total = exercises.length;
+    const safeIndex = Math.min(currentIndex, Math.max(total - 1, 0));
+    const ex = exercises[safeIndex];
+
+    function goPrev() { setCurrentIndex(i => Math.max(i - 1, 0)); }
+    function goNext() { setCurrentIndex(i => Math.min(i + 1, total - 1)); }
 
     // ── Finish ────────────────────────────────────────────────────────────────
 
@@ -328,18 +394,46 @@ export default function WorkoutSessionScreen() {
         ]);
     }
 
+    // ── Delete (completed / skipped sessions) ────────────────────────────────
+
+    function doDelete() {
+        deleteSession(
+            {id: sessionId},
+            {
+                onSuccess: () => { toast.info('Session deleted.'); router.back(); },
+                onError: () => toast.error('Failed to delete session.'),
+            },
+        );
+    }
+
+    function handleDelete() {
+        if (Platform.OS === 'web') {
+            if (window.confirm('Delete this session? This cannot be undone.')) doDelete();
+            return;
+        }
+        Alert.alert('Delete session', 'Delete this session? This cannot be undone.', [
+            {text: 'Cancel', style: 'cancel'},
+            {text: 'Delete', style: 'destructive', onPress: doDelete},
+        ]);
+    }
+
     // ── Header right ──────────────────────────────────────────────────────────
 
-    const headerRight = !isLoading && !isReadOnly ? (
+    const headerRight = !isLoading ? (
         <Pressable
-            onPress={handleDiscard}
+            onPress={isReadOnly ? handleDelete : handleDiscard}
             disabled={isDeleting}
-            accessibilityLabel="Discard session"
+            accessibilityLabel={isReadOnly ? 'Delete session' : 'Discard session'}
             style={{padding: 8, opacity: isDeleting ? 0.4 : 1}}
         >
             <Ionicons name="trash-outline" size={20} color={palette.destructive}/>
         </Pressable>
     ) : undefined;
+
+    // ── Primary / secondary muscles ───────────────────────────────────────────
+
+    const primaryMuscles = ex?.muscles.filter(m => m.role !== 'SECONDARY') ?? [];
+    const secondaryMuscles = ex?.muscles.filter(m => m.role === 'SECONDARY') ?? [];
 
     return (
         <DetailLayout
@@ -351,18 +445,25 @@ export default function WorkoutSessionScreen() {
                 behavior="padding"
                 keyboardVerticalOffset={88}
             >
+                {/* Progress bar */}
+                {!isLoading && total > 0 && (
+                    <ProgressBar current={safeIndex} total={total}/>
+                )}
+
                 <ScrollView
                     contentContainerStyle={{padding: 24, gap: 16, paddingBottom: 24, ...webContentStyle}}
                     keyboardShouldPersistTaps="handled"
-                    refreshControl={Platform.OS !== 'web' ? (
-                        <RefreshControl refreshing={isRefetching} onRefresh={() => void refetch()}/>
-                    ) : undefined}
+                    key={safeIndex}
                 >
                     {isLoading ? (
                         <SessionSkeleton/>
+                    ) : !ex ? (
+                        <Typography variant="body-sm" className="text-muted-foreground text-center">
+                            No exercises in this session.
+                        </Typography>
                     ) : (
                         <>
-                            {/* Status badge */}
+                            {/* Status + date */}
                             <View className="flex-row items-center gap-3">
                                 <Badge
                                     label={statusBadgeLabel(sessionStatus)}
@@ -375,68 +476,160 @@ export default function WorkoutSessionScreen() {
                                         })}
                                     </Typography>
                                 )}
+                                <View className="flex-1"/>
+                                <Typography variant="caption" className="text-muted-foreground">
+                                    {safeIndex + 1} / {total}
+                                </Typography>
                             </View>
 
-                            {/* Exercises */}
-                            {exercises.map((ex, exIdx) => (
-                                <Card key={ex.id ?? exIdx} padding="md" className="gap-3">
-                                    <View className="flex-row items-center gap-3">
-                                        <View className="bg-muted items-center justify-center overflow-hidden" style={{width: 48, height: 48, borderRadius: 8}}>
-                                            {ex.thumbnailUrl ? (
-                                                Platform.OS === 'web' ? (
-                                                    // @ts-ignore
-                                                    <img src={ex.thumbnailUrl} style={{width: 48, height: 48, objectFit: 'cover'}} alt=""/>
-                                                ) : (
-                                                    <Image source={{uri: ex.thumbnailUrl}} style={{width: 48, height: 48}} resizeMode="cover"/>
-                                                )
+                            {/* Exercise header */}
+                            <Card padding="md" className="gap-3">
+                                <View className="flex-row items-center gap-3">
+                                    <View className="bg-muted items-center justify-center overflow-hidden" style={{width: 56, height: 56, borderRadius: 10}}>
+                                        {ex.thumbnailUrl ? (
+                                            Platform.OS === 'web' ? (
+                                                // @ts-ignore
+                                                <img src={ex.thumbnailUrl} style={{width: 56, height: 56, objectFit: 'cover'}} alt=""/>
                                             ) : (
-                                                <Ionicons name="barbell-outline" size={22} color="#9ca3af"/>
-                                            )}
-                                        </View>
-                                        <View className="flex-1 flex-row items-center justify-between">
-                                            <Heading level="h5" className="flex-1 mr-2">{ex.exerciseName}</Heading>
-                                            {ex.sets.every(s => s.completed) && ex.sets.length > 0 && (
-                                                <Ionicons name="checkmark-circle" size={18} color="#22c55e"/>
-                                            )}
-                                        </View>
+                                                <Image source={{uri: ex.thumbnailUrl}} style={{width: 56, height: 56}} resizeMode="cover"/>
+                                            )
+                                        ) : (
+                                            <Ionicons name="barbell-outline" size={26} color="#9ca3af"/>
+                                        )}
                                     </View>
+                                    <View className="flex-1">
+                                        <Heading level="h4">{ex.exerciseName}</Heading>
+                                        {ex.sets.every(s => s.completed) && ex.sets.length > 0 && (
+                                            <View className="flex-row items-center gap-1 mt-1">
+                                                <Ionicons name="checkmark-circle" size={14} color="#22c55e"/>
+                                                <Typography variant="caption" style={{color: '#22c55e'}}>All sets done</Typography>
+                                            </View>
+                                        )}
+                                    </View>
+                                </View>
 
-                                    {ex.sets.map((s, setIdx) => (
-                                        <SessionSetRow
-                                            key={s.id ?? setIdx}
-                                            index={setIdx}
-                                            result={s}
-                                            metric={ex.metric}
-                                            onChange={partial => updateSetResult(exIdx, setIdx, partial)}
-                                            readOnly={isReadOnly}
-                                        />
-                                    ))}
+                                {/* Info pills */}
+                                {(ex.equipment.length > 0 || ex.movementPatterns.length > 0 || ex.muscles.length > 0) && (
+                                    <View className="gap-2">
+                                        {ex.equipment.length > 0 && (
+                                            <View className="flex-row flex-wrap gap-2 items-center">
+                                                <Typography variant="caption" className="text-muted-foreground">Equipment</Typography>
+                                                {ex.equipment.map(e => (
+                                                    <InfoPill key={e.title} label={e.title} color="blue"/>
+                                                ))}
+                                            </View>
+                                        )}
+                                        {ex.movementPatterns.length > 0 && (
+                                            <View className="flex-row flex-wrap gap-2 items-center">
+                                                <Typography variant="caption" className="text-muted-foreground">Movement</Typography>
+                                                {ex.movementPatterns.map(p => (
+                                                    <InfoPill key={p} label={p} color="teal"/>
+                                                ))}
+                                            </View>
+                                        )}
+                                        {primaryMuscles.length > 0 && (
+                                            <View className="flex-row flex-wrap gap-2 items-center">
+                                                <Typography variant="caption" className="text-muted-foreground">Muscles</Typography>
+                                                {primaryMuscles.map(m => (
+                                                    <InfoPill key={m.name} label={m.name} color="rose"/>
+                                                ))}
+                                                {secondaryMuscles.map(m => (
+                                                    <InfoPill key={m.name} label={m.name} color="indigo"/>
+                                                ))}
+                                            </View>
+                                        )}
+                                    </View>
+                                )}
+                            </Card>
 
-                                    <ExerciseNoteInput
-                                        value={ex.note ?? ''}
-                                        onChange={note => updateExerciseNote(exIdx, note)}
-                                        readOnly={isReadOnly}
-                                    />
-                                </Card>
+                            {/* Exercise note */}
+                            <ExerciseNoteInput
+                                value={ex.note ?? ''}
+                                onChange={note => updateExerciseNote(safeIndex, note)}
+                                readOnly={isReadOnly}
+                            />
+
+                            {/* Sets */}
+                            {ex.sets.map((s, setIdx) => (
+                                <SessionSetRow
+                                    key={s.id ?? setIdx}
+                                    index={setIdx}
+                                    isLast={setIdx === ex.sets.length - 1}
+                                    result={s}
+                                    metric={ex.metric}
+                                    onChange={partial => updateSetResult(safeIndex, setIdx, partial)}
+                                    readOnly={isReadOnly}
+                                />
                             ))}
                         </>
                     )}
                 </ScrollView>
 
-                {/* Footer actions */}
+                {/* Footer */}
                 {!isLoading && (
                     <View
                         className="bg-background border-t border-border px-6 py-4"
-                        style={{paddingBottom: Platform.OS === 'ios' ? 24 : 16, gap: 10}}
+                        style={{paddingBottom: Platform.OS === 'ios' ? 24 : 16, gap: 12}}
                     >
-                        {isReadOnly ? (
-                            <Typography variant="body-sm" className="text-center text-muted-foreground">
-                                {session?.finishedAt
-                                    ? `Completed on ${new Date(session.finishedAt).toLocaleDateString(undefined, {month: 'short', day: 'numeric', year: 'numeric'})}`
-                                    : 'This session is read-only.'}
-                            </Typography>
-                        ) : (
+                        {!isReadOnly && (
                             <Button label="Finish Workout" onPress={handleFinish}/>
+                        )}
+
+                        {/* Prev / Next navigation */}
+                        {total > 1 && (
+                            <View className="flex-row items-center justify-between gap-3">
+                                <Pressable
+                                    onPress={goPrev}
+                                    disabled={safeIndex === 0}
+                                    className="flex-row items-center gap-1 rounded-lg border border-border px-4"
+                                    style={{height: 40, opacity: safeIndex === 0 ? 0.3 : 1}}
+                                    accessibilityLabel="Previous exercise"
+                                >
+                                    <Ionicons name="chevron-back" size={16} color={palette.foreground}/>
+                                    <Typography variant="body-sm">Prev</Typography>
+                                </Pressable>
+
+                                {/* Dot indicators (max 7 shown) */}
+                                <View className="flex-row items-center gap-1 flex-1 justify-center">
+                                    {total <= 7 ? (
+                                        exercises.map((e, i) => {
+                                            const done = e.sets.length > 0 && e.sets.every(s => s.completed);
+                                            return (
+                                                <Pressable
+                                                    key={i}
+                                                    onPress={() => setCurrentIndex(i)}
+                                                    accessibilityLabel={`Go to exercise ${i + 1}`}
+                                                    style={{
+                                                        width: i === safeIndex ? 18 : 7,
+                                                        height: 7,
+                                                        borderRadius: 4,
+                                                        backgroundColor: i === safeIndex
+                                                            ? palette.primary
+                                                            : done
+                                                                ? '#22c55e'
+                                                                : palette.border,
+                                                    }}
+                                                />
+                                            );
+                                        })
+                                    ) : (
+                                        <Typography variant="caption" className="text-muted-foreground">
+                                            {safeIndex + 1} / {total}
+                                        </Typography>
+                                    )}
+                                </View>
+
+                                <Pressable
+                                    onPress={goNext}
+                                    disabled={safeIndex === total - 1}
+                                    className="flex-row items-center gap-1 rounded-lg border border-border px-4"
+                                    style={{height: 40, opacity: safeIndex === total - 1 ? 0.3 : 1}}
+                                    accessibilityLabel="Next exercise"
+                                >
+                                    <Typography variant="body-sm">Next</Typography>
+                                    <Ionicons name="chevron-forward" size={16} color={palette.foreground}/>
+                                </Pressable>
+                            </View>
                         )}
                     </View>
                 )}

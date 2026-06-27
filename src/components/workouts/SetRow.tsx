@@ -1,5 +1,5 @@
 import {useState} from 'react';
-import {Modal, Platform, Pressable, TextInput, View} from 'react-native';
+import {Modal, Platform, Pressable, View} from 'react-native';
 import {Control, Controller, useWatch} from 'react-hook-form';
 import {Ionicons} from '@expo/vector-icons';
 import {useColorScheme} from 'nativewind';
@@ -15,13 +15,9 @@ interface SetRowProps {
     onRemove: () => void;
 }
 
-function SetTypePicker({
-    control,
-    name,
-}: {
-    control: Control<WorkoutCreateFormValues>;
-    name: `workoutExercises.${number}.workoutExerciseSets.${number}.workoutExerciseSetType`;
-}) {
+type SetFieldPath = `workoutExercises.${number}.workoutExerciseSets.${number}.workoutExerciseSetType`;
+
+function SetTypePicker({control, name}: {control: Control<WorkoutCreateFormValues>; name: SetFieldPath}) {
     const {colorScheme} = useColorScheme();
     const palette = themeColors[colorScheme ?? 'light'];
     const modalBg = colorScheme === 'dark' ? '#0f0f0f' : '#ffffff';
@@ -92,12 +88,12 @@ export function SetRow({control, exerciseIndex, setIndex, onRemove}: SetRowProps
 
     return (
         <View className="rounded-lg border border-border bg-card p-3 gap-2">
-            {/* Row 1: set number + type picker + rest + note toggle + delete */}
+            {/* Row 1: set number + type picker + note toggle + delete */}
             <View className="flex-row items-center gap-2">
                 <View className="w-6 h-6 rounded-full bg-muted items-center justify-center">
                     <Typography variant="caption" className="font-bold text-muted-foreground">{setIndex + 1}</Typography>
                 </View>
-                <SetTypePicker control={control} name={`${base}.workoutExerciseSetType` as `workoutExercises.${number}.workoutExerciseSets.${number}.workoutExerciseSetType`}/>
+                <SetTypePicker control={control} name={`${base}.workoutExerciseSetType` as SetFieldPath}/>
                 <View className="flex-1"/>
                 <Pressable onPress={() => setNoteExpanded(v => !v)} hitSlop={8}>
                     <Ionicons
@@ -111,7 +107,7 @@ export function SetRow({control, exerciseIndex, setIndex, onRemove}: SetRowProps
                 </Pressable>
             </View>
 
-            {/* Row 2: note (optional) */}
+            {/* Note (optional) */}
             {(noteExpanded || noteValue) && (
                 <Controller
                     control={control}
