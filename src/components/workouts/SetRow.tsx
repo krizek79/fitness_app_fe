@@ -1,5 +1,5 @@
 import {useState} from 'react';
-import {Modal, Platform, Pressable, View} from 'react-native';
+import {Modal, Platform, Pressable, TextInput, View} from 'react-native';
 import {Control, Controller, useWatch} from 'react-hook-form';
 import {Ionicons} from '@expo/vector-icons';
 import {useColorScheme} from 'nativewind';
