@@ -5,7 +5,7 @@ import {useForm, Controller} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {useQueryClient} from '@tanstack/react-query';
 import type {ImagePickerAsset} from 'expo-image-picker';
-import {useGetEquipmentById, useUpdateEquipment, getGetEquipmentByIdQueryKey} from '@/src/api/generated/equipment/equipment';
+import {useGetEquipmentById, useUpdateEquipment, useDeleteThumbnail1, getGetEquipmentByIdQueryKey} from '@/src/api/generated/equipment/equipment';
 import {
     equipmentCreateSchema,
     TITLE_MAX,
@@ -25,6 +25,7 @@ export default function EditEquipmentScreen() {
 
     const {data: equipment, isLoading} = useGetEquipmentById(Number(id));
     const {mutate: updateEquipment, isPending} = useUpdateEquipment();
+    const {mutate: deleteThumbnail, isPending: isDeletingThumbnail} = useDeleteThumbnail1();
     const [thumbnail, setThumbnail] = useState<ImagePickerAsset | null>(null);
 
     const {control, handleSubmit, reset, formState: {errors}} = useForm<EquipmentCreateFormValues>({
@@ -87,9 +88,15 @@ export default function EditEquipmentScreen() {
                         />
 
                         <ImagePickerField
-                            label={equipment?.thumbnailUrl ? 'Replace thumbnail (optional)' : 'Thumbnail (optional)'}
+                            label="Thumbnail (optional)"
                             value={thumbnail}
                             onChange={setThumbnail}
+                            existingUrl={equipment?.thumbnailUrl}
+                            onDeleteExisting={() => deleteThumbnail(
+                                {id: Number(id)},
+                                {onSuccess: () => queryClient.invalidateQueries({queryKey: getGetEquipmentByIdQueryKey(Number(id))})},
+                            )}
+                            isDeletingExisting={isDeletingThumbnail}
                         />
                     </View>
                 )}

@@ -396,4 +396,66 @@ export const useFilterEquipment = <TError = ProblemDetails | ProblemDetails,
 
       return useMutation(mutationOptions, queryClient);
     }
+    /**
+ * Deletes the thumbnail image of an equipment from Cloudinary and clears the thumbnail URL.
+ * @summary Delete equipment thumbnail
+ */
+export const deleteThumbnail1 = (
+    id: number,
+ ) => {
+      
+      
+      return customInstance<void>(
+      {url: `/equipment/${id}/thumbnail`, method: 'DELETE'
+    },
+      );
+    }
+  
+
+
+export const getDeleteThumbnail1MutationOptions = <TError = ProblemDetails | ProblemDetails | ProblemDetails | ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteThumbnail1>>, TError,{id: number}, TContext>, }
+): UseMutationOptions<Awaited<ReturnType<typeof deleteThumbnail1>>, TError,{id: number}, TContext> => {
+
+const mutationKey = ['deleteThumbnail1'];
+const {mutation: mutationOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof deleteThumbnail1>>, {id: number}> = (props) => {
+          const {id} = props ?? {};
+
+          return  deleteThumbnail1(id,)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type DeleteThumbnail1MutationResult = NonNullable<Awaited<ReturnType<typeof deleteThumbnail1>>>
+    
+    export type DeleteThumbnail1MutationError = ProblemDetails | ProblemDetails | ProblemDetails | ProblemDetails
+
+    /**
+ * @summary Delete equipment thumbnail
+ */
+export const useDeleteThumbnail1 = <TError = ProblemDetails | ProblemDetails | ProblemDetails | ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteThumbnail1>>, TError,{id: number}, TContext>, }
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof deleteThumbnail1>>,
+        TError,
+        {id: number},
+        TContext
+      > => {
+
+      const mutationOptions = getDeleteThumbnail1MutationOptions(options);
+
+      return useMutation(mutationOptions, queryClient);
+    }
     

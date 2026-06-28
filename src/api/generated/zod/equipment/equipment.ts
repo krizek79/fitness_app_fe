@@ -64,3 +64,11 @@ export const filterEquipmentBody = zod.object({
   "title": zod.string().optional()
 })
 
+/**
+ * Deletes the thumbnail image of an equipment from Cloudinary and clears the thumbnail URL.
+ * @summary Delete equipment thumbnail
+ */
+export const deleteThumbnail1Params = zod.object({
+  "id": zod.number()
+})
+

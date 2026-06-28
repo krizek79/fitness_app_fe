@@ -10,10 +10,13 @@ interface ImagePickerFieldProps {
     label?: string;
     value: ImagePickerAsset | null;
     onChange: (asset: ImagePickerAsset | null) => void;
+    existingUrl?: string | null;
+    onDeleteExisting?: () => void;
+    isDeletingExisting?: boolean;
     error?: string;
 }
 
-export function ImagePickerField({label, value, onChange, error}: ImagePickerFieldProps) {
+export function ImagePickerField({label, value, onChange, existingUrl, onDeleteExisting, isDeletingExisting, error}: ImagePickerFieldProps) {
     const {colorScheme} = useColorScheme();
     const palette = themeColors[colorScheme ?? 'light'];
     const {pickImage} = useImagePicker();
@@ -22,6 +25,9 @@ export function ImagePickerField({label, value, onChange, error}: ImagePickerFie
         const asset = await pickImage();
         if (asset) onChange(asset);
     }
+
+    const showExisting = !!existingUrl && !value;
+    const previewUri = value?.uri ?? (showExisting ? existingUrl : null);
 
     return (
         <View className="gap-1.5">
@@ -34,34 +40,47 @@ export function ImagePickerField({label, value, onChange, error}: ImagePickerFie
                 className="w-full rounded-xl border border-dashed border-input bg-muted/30 overflow-hidden"
                 style={{height: 180}}
                 accessibilityRole="button"
-                accessibilityLabel={value ? 'Change thumbnail' : 'Add thumbnail'}
+                accessibilityLabel={previewUri ? 'Change thumbnail' : 'Add thumbnail'}
             >
-                {value ? (
+                {previewUri ? (
                     <>
                         {Platform.OS === 'web' ? (
                             <img
-                                src={value.uri}
+                                src={previewUri}
                                 style={{width: '100%', height: '100%', objectFit: 'cover'}}
                              alt=""/>
                         ) : (
                             <Image
-                                source={{uri: value.uri}}
+                                source={{uri: previewUri}}
                                 style={{width: '100%', height: '100%'}}
                                 resizeMode="cover"
                             />
                         )}
 
-                        {/* Clear button */}
-                        <Pressable
-                            onPress={e => {
-                                e.stopPropagation?.();
-                                onChange(null);
-                            }}
-                            className="absolute top-2 right-2 w-7 h-7 rounded-full bg-black/60 items-center justify-center"
-                            accessibilityLabel="Remove thumbnail"
-                        >
-                            <Ionicons name="close" size={16} color="#ffffff"/>
-                        </Pressable>
+                        {value ? (
+                            <Pressable
+                                onPress={e => {
+                                    e.stopPropagation?.();
+                                    onChange(null);
+                                }}
+                                className="absolute top-2 right-2 w-7 h-7 rounded-full bg-black/60 items-center justify-center"
+                                accessibilityLabel="Remove selected image"
+                            >
+                                <Ionicons name="close" size={16} color="#ffffff"/>
+                            </Pressable>
+                        ) : onDeleteExisting ? (
+                            <Pressable
+                                onPress={e => {
+                                    e.stopPropagation?.();
+                                    onDeleteExisting();
+                                }}
+                                disabled={isDeletingExisting}
+                                className="absolute top-2 right-2 w-7 h-7 rounded-full bg-black/60 items-center justify-center"
+                                accessibilityLabel="Delete thumbnail"
+                            >
+                                <Ionicons name={isDeletingExisting ? 'hourglass-outline' : 'trash-outline'} size={16} color="#ffffff"/>
+                            </Pressable>
+                        ) : null}
                     </>
                 ) : (
                     <View className="flex-1 items-center justify-center gap-2">

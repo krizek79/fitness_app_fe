@@ -90,3 +90,11 @@ export const filterExercisesBody = zod.object({
   "requiredEquipmentIds": zod.array(zod.number()).optional()
 })
 
+/**
+ * Deletes the thumbnail image of an exercise from Cloudinary and clears the thumbnail URL.
+ * @summary Delete exercise thumbnail
+ */
+export const deleteThumbnailParams = zod.object({
+  "id": zod.number()
+})
+

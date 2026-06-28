@@ -5,7 +5,7 @@ import {useForm, Controller} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {useQueryClient} from '@tanstack/react-query';
 import type {ImagePickerAsset} from 'expo-image-picker';
-import {useGetExerciseById, useUpdateExercise, getGetExerciseByIdQueryKey} from '@/src/api/generated/exercise/exercise';
+import {useGetExerciseById, useUpdateExercise, useDeleteThumbnail, getGetExerciseByIdQueryKey} from '@/src/api/generated/exercise/exercise';
 import {
     exerciseCreateSchema,
     TITLE_MAX,
@@ -30,6 +30,7 @@ export default function EditExerciseScreen() {
 
     const {data: exercise, isLoading} = useGetExerciseById(Number(id));
     const {mutate: updateExercise, isPending} = useUpdateExercise();
+    const {mutate: deleteThumbnail, isPending: isDeletingThumbnail} = useDeleteThumbnail();
     const [thumbnail, setThumbnail] = useState<ImagePickerAsset | null>(null);
 
     const {control, handleSubmit, reset, formState: {errors}} = useForm<ExerciseCreateFormValues>({
@@ -118,9 +119,15 @@ export default function EditExerciseScreen() {
                         />
 
                         <ImagePickerField
-                            label={exercise?.thumbnailUrl ? 'Replace thumbnail (optional)' : 'Thumbnail (optional)'}
+                            label="Thumbnail (optional)"
                             value={thumbnail}
                             onChange={setThumbnail}
+                            existingUrl={exercise?.thumbnailUrl}
+                            onDeleteExisting={() => deleteThumbnail(
+                                {id: Number(id)},
+                                {onSuccess: () => queryClient.invalidateQueries({queryKey: getGetExerciseByIdQueryKey(Number(id))})},
+                            )}
+                            isDeletingExisting={isDeletingThumbnail}
                         />
 
                         <Divider/>
