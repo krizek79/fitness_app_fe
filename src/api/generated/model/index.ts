@@ -5,7 +5,9 @@
  * Comprehensive API for fitness application with support for workout plans, exercises, and progress tracking. API provides OAuth2 authentication via Keycloak or JWT tokens.
  */
 
+export * from './coachingContractClientPageResponse';
 export * from './coachingContractCreateRequest';
+export * from './coachingContractFilterClientsRequest';
 export * from './coachingContractFilterRequest';
 export * from './coachingContractPageResponse';
 export * from './coachingContractResponse';

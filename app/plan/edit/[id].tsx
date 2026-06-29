@@ -4,32 +4,36 @@ import {useForm, Controller, useWatch} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {Ionicons} from '@expo/vector-icons';
 import {useColorScheme} from 'nativewind';
+import {useEffect, useState} from 'react';
 import {useQueryClient} from '@tanstack/react-query';
 import {useGetPlanById, useUpdatePlan, getGetPlanByIdQueryKey} from '@/src/api/generated/plan/plan';
+import type {ProfileSimpleResponse} from '@/src/api/generated/model';
 import {planEditSchema, DESCRIPTION_MAX, WEEKS_MIN, WEEKS_MAX, type PlanEditFormValues} from '@/src/lib/schemas/plans/planEdit';
 import {Input} from '@/src/components/primitives/form/Input';
 import {Button} from '@/src/components/primitives/ui/Button';
 import {Typography} from '@/src/components/primitives/ui/Typography';
 import {SearchSelect} from '@/src/components/primitives/form/SearchSelect';
+import {TraineePickerModal} from '@/src/components/shared/TraineePickerModal';
 import {Skeleton, SkeletonGroup} from '@/src/components/primitives/ui/Skeleton';
 import {DetailLayout, webContentStyle} from '@/src/components/primitives/layout/DetailLayout';
 import {themeColors} from '@/src/constants/colors';
 import {cn} from '@/src/lib/utils';
-import {useEffect} from 'react';
 
 export default function EditPlanScreen() {
     const {id} = useLocalSearchParams<{id: string}>();
     const router = useRouter();
     const {colorScheme} = useColorScheme();
     const palette = themeColors[colorScheme ?? 'light'];
+    const [traineePickerOpen, setTraineePickerOpen] = useState(false);
+    const [selectedTrainee, setSelectedTrainee] = useState<ProfileSimpleResponse | null>(null);
 
     const queryClient = useQueryClient();
     const {data: plan, isLoading} = useGetPlanById(Number(id));
     const {mutate: updatePlan, isPending} = useUpdatePlan();
 
-    const {control, handleSubmit, reset, formState: {errors}} = useForm<PlanEditFormValues>({
+    const {control, handleSubmit, reset, setValue, formState: {errors}} = useForm<PlanEditFormValues>({
         resolver: zodResolver(planEditSchema),
-        defaultValues: {title: '', description: '', numberOfWeeks: 1},
+        defaultValues: {title: '', description: '', numberOfWeeks: 1, traineeId: undefined},
     });
 
     useEffect(() => {
@@ -38,7 +42,9 @@ export default function EditPlanScreen() {
                 title: plan.title ?? '',
                 description: plan.description ?? '',
                 numberOfWeeks: plan.weeks?.length ?? 1,
+                traineeId: plan.trainee?.id ?? undefined,
             });
+            setSelectedTrainee(plan.trainee ?? null);
         }
     }, [plan]);
 
@@ -50,7 +56,7 @@ export default function EditPlanScreen() {
         }));
 
         updatePlan(
-            {id: Number(id), data: {title: values.title, description: values.description || undefined, weeks}},
+            {id: Number(id), data: {title: values.title, description: values.description || undefined, weeks, traineeId: values.traineeId}},
             {
                 onSuccess: () => {
                     queryClient.invalidateQueries({queryKey: getGetPlanByIdQueryKey(Number(id))});
@@ -64,11 +70,15 @@ export default function EditPlanScreen() {
 
     const resetButton = (
         <Pressable
-            onPress={() => reset({
-                title: plan?.title ?? '',
-                description: plan?.description ?? '',
-                numberOfWeeks: plan?.weeks?.length ?? 1,
-            })}
+            onPress={() => {
+                reset({
+                    title: plan?.title ?? '',
+                    description: plan?.description ?? '',
+                    numberOfWeeks: plan?.weeks?.length ?? 1,
+                    traineeId: plan?.trainee?.id ?? undefined,
+                });
+                setSelectedTrainee(plan?.trainee ?? null);
+            }}
             accessibilityLabel="Reset changes"
             style={{padding: 8}}
         >
@@ -107,13 +117,13 @@ export default function EditPlanScreen() {
                             )}
                         />
 
-                        <SearchSelect
+                        <SearchSelect<ProfileSimpleResponse>
                             label="Assigned to (optional)"
                             placeholder="Search trainee..."
-                            items={[]}
-                            getLabel={() => ''}
+                            value={selectedTrainee ?? undefined}
+                            getLabel={t => t.name ?? ''}
                             onSelect={() => {}}
-                            disabled
+                            onPress={() => setTraineePickerOpen(true)}
                         />
 
                         <Controller
@@ -202,6 +212,15 @@ export default function EditPlanScreen() {
                     disabled={isLoading}
                 />
             </ScrollView>
+
+            <TraineePickerModal
+                visible={traineePickerOpen}
+                onClose={() => setTraineePickerOpen(false)}
+                onSelect={trainee => {
+                    setSelectedTrainee(trainee);
+                    setValue('traineeId', trainee?.id ?? undefined);
+                }}
+            />
         </DetailLayout>
     );
 }

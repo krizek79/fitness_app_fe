@@ -7,7 +7,7 @@ import {Ionicons} from '@expo/vector-icons';
 import {useColorScheme} from 'nativewind';
 import {useCreateWorkout, getWorkoutById} from '@/src/api/generated/workout/workout';
 import {DraftCreateRequestEntityType} from '@/src/api/generated/model/draftCreateRequestEntityType';
-import type {WorkoutInputRequest} from '@/src/api/generated/model';
+import type {ProfileSimpleResponse, WorkoutInputRequest} from '@/src/api/generated/model';
 import {WorkoutExerciseInputRequestWorkoutExerciseMetric} from '@/src/api/generated/model/workoutExerciseInputRequestWorkoutExerciseMetric';
 import {WorkoutExerciseSetInputRequestWorkoutExerciseSetType} from '@/src/api/generated/model/workoutExerciseSetInputRequestWorkoutExerciseSetType';
 import {
@@ -28,6 +28,8 @@ import {TagInputField} from '@/src/components/workouts/TagInputField';
 import {ExercisePickerModal} from '@/src/components/workouts/ExercisePickerModal';
 import {ExerciseBuilderItem} from '@/src/components/workouts/ExerciseBuilderItem';
 import {TemplatePickerModal} from '@/src/components/workouts/TemplatePickerModal';
+import {SearchSelect} from '@/src/components/primitives/form/SearchSelect';
+import {TraineePickerModal} from '@/src/components/shared/TraineePickerModal';
 import {cloneWorkoutToFormValues} from '@/src/lib/workoutClone';
 import {SortableList} from '@/src/components/primitives/ui/SortableList';
 import {themeColors} from '@/src/constants/colors';
@@ -64,6 +66,8 @@ export default function WorkoutDraftScreen() {
     const [step, setStep] = useState<'1' | '2'>('1');
     const [exercisePickerOpen, setExercisePickerOpen] = useState(false);
     const [templatePickerOpen, setTemplatePickerOpen] = useState(false);
+    const [traineePickerOpen, setTraineePickerOpen] = useState(false);
+    const [selectedTrainee, setSelectedTrainee] = useState<ProfileSimpleResponse | null>(null);
     const [isCloningTemplate, setIsCloningTemplate] = useState(false);
     const [draftLoaded, setDraftLoaded] = useState(numericDraftId === null);
 
@@ -144,6 +148,7 @@ export default function WorkoutDraftScreen() {
             weightUnit: values.weightUnit,
             distanceUnit: values.distanceUnit as WorkoutInputRequestDistanceUnit,
             isTemplate,
+            traineeId: isTemplate ? undefined : (values.traineeId ?? undefined),
             tags: values.tags.map(name => ({name})),
             workoutExercises: values.workoutExercises.map((ex, i) => ({
                 exerciseId: ex.exerciseId,
@@ -223,6 +228,17 @@ export default function WorkoutDraftScreen() {
                                 />
                             )}
                         />
+
+                        {!isTemplate && (
+                            <SearchSelect<ProfileSimpleResponse>
+                                label="Assigned to (optional)"
+                                placeholder="Search trainee..."
+                                value={selectedTrainee ?? undefined}
+                                getLabel={t => t.name ?? ''}
+                                onSelect={() => {}}
+                                onPress={() => setTraineePickerOpen(true)}
+                            />
+                        )}
 
                         {/* Description */}
                         <Controller
@@ -379,6 +395,15 @@ export default function WorkoutDraftScreen() {
                 visible={templatePickerOpen}
                 onClose={() => setTemplatePickerOpen(false)}
                 onSelect={handleCloneTemplate}
+            />
+
+            <TraineePickerModal
+                visible={traineePickerOpen}
+                onClose={() => setTraineePickerOpen(false)}
+                onSelect={trainee => {
+                    setSelectedTrainee(trainee);
+                    setValue('traineeId', trainee?.id ?? undefined);
+                }}
             />
 
             <ExercisePickerModal

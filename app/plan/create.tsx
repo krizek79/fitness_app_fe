@@ -4,8 +4,9 @@ import {useForm, Controller, useWatch} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {Ionicons} from '@expo/vector-icons';
 import {useColorScheme} from 'nativewind';
-import {useEffect} from 'react';
+import {useEffect, useState} from 'react';
 import {useCreatePlan} from '@/src/api/generated/plan/plan';
+import type {ProfileSimpleResponse} from '@/src/api/generated/model';
 import {planCreateSchema, PLAN_CREATE_DEFAULTS, DESCRIPTION_MAX, WEEKS_MIN, WEEKS_MAX, type PlanCreateFormValues} from '@/src/lib/schemas/plans/planCreate';
 import {usePlanDraft} from '@/src/hooks/usePlanDraft';
 import {useDebounce} from '@/src/hooks/useDebounce';
@@ -13,6 +14,7 @@ import {Input} from '@/src/components/primitives/form/Input';
 import {Button} from '@/src/components/primitives/ui/Button';
 import {Typography} from '@/src/components/primitives/ui/Typography';
 import {SearchSelect} from '@/src/components/primitives/form/SearchSelect';
+import {TraineePickerModal} from '@/src/components/shared/TraineePickerModal';
 import {DetailLayout, webContentStyle} from '@/src/components/primitives/layout/DetailLayout';
 import {themeColors} from '@/src/constants/colors';
 import {cn} from '@/src/lib/utils';
@@ -22,8 +24,10 @@ export default function CreatePlanScreen() {
     const {colorScheme} = useColorScheme();
     const palette = themeColors[colorScheme ?? 'light'];
     const {mutate: createPlan, isPending} = useCreatePlan();
+    const [traineePickerOpen, setTraineePickerOpen] = useState(false);
+    const [selectedTrainee, setSelectedTrainee] = useState<ProfileSimpleResponse | null>(null);
 
-    const {control, handleSubmit, reset, formState: {errors}} = useForm<PlanCreateFormValues>({
+    const {control, handleSubmit, reset, setValue, formState: {errors}} = useForm<PlanCreateFormValues>({
         resolver: zodResolver(planCreateSchema),
         defaultValues: PLAN_CREATE_DEFAULTS,
     });
@@ -35,6 +39,7 @@ export default function CreatePlanScreen() {
     function handleReset() {
         discard();
         reset(PLAN_CREATE_DEFAULTS);
+        setSelectedTrainee(null);
     }
 
     const watchedValues = useWatch({control});
@@ -49,7 +54,7 @@ export default function CreatePlanScreen() {
     function onSubmit(values: PlanCreateFormValues) {
         const weeks = Array.from({length: values.numberOfWeeks}, (_, i) => ({order: i + 1}));
         createPlan(
-            {data: {title: values.title, description: values.description || undefined, weeks}},
+            {data: {title: values.title, description: values.description || undefined, weeks, traineeId: values.traineeId}},
             {
                 onSuccess(data) {
                     discard();
@@ -91,13 +96,13 @@ export default function CreatePlanScreen() {
                         )}
                     />
 
-                    <SearchSelect
+                    <SearchSelect<ProfileSimpleResponse>
                         label="Assigned to (optional)"
                         placeholder="Search trainee..."
-                        items={[]}
-                        getLabel={() => ''}
+                        value={selectedTrainee ?? undefined}
+                        getLabel={t => t.name ?? ''}
                         onSelect={() => {}}
-                        disabled
+                        onPress={() => setTraineePickerOpen(true)}
                     />
 
                     {/* Description with character counter */}
@@ -186,6 +191,15 @@ export default function CreatePlanScreen() {
                     loading={isPending}
                 />
             </ScrollView>
+
+            <TraineePickerModal
+                visible={traineePickerOpen}
+                onClose={() => setTraineePickerOpen(false)}
+                onSelect={trainee => {
+                    setSelectedTrainee(trainee);
+                    setValue('traineeId', trainee?.id ?? undefined);
+                }}
+            />
         </DetailLayout>
     );
 }

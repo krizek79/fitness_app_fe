@@ -11,7 +11,8 @@ interface SearchSelectProps<T> {
     value?: T;
     onSelect: (item: T) => void;
     getLabel: (item: T) => string;
-    items: T[];
+    items?: T[];
+    onPress?: () => void;
     disabled?: boolean;
     error?: string;
 }
@@ -23,6 +24,7 @@ export function SearchSelect<T>({
     onSelect,
     getLabel,
     items,
+    onPress,
     disabled = false,
     error,
 }: SearchSelectProps<T>) {
@@ -35,7 +37,7 @@ export function SearchSelect<T>({
                 <Typography variant="body-sm" className="font-medium text-foreground">{label}</Typography>
             )}
             <Pressable
-                onPress={() => {/* open search modal */}}
+                onPress={onPress}
                 disabled={disabled}
                 className={cn(
                     'flex-row items-center justify-between rounded-md border bg-background px-4',

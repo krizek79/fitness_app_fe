@@ -30,13 +30,13 @@ export const TABS: TabConfig[] = [
         icon: 'fitness-outline',
         iconActive: 'fitness',
     },
-    // {
-    //     name: 'plans',
-    //     href: '/plans',
-    //     label: 'Plans',
-    //     icon: 'calendar-outline',
-    //     iconActive: 'calendar',
-    // },
+    {
+        name: 'plans',
+        href: '/plans',
+        label: 'Plans',
+        icon: 'calendar-outline',
+        iconActive: 'calendar',
+    },
     {
         // Mobile-only hub that replaces the individual admin tabs in the tab bar
         name: 'admin',

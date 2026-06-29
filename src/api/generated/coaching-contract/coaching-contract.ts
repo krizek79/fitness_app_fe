@@ -24,7 +24,9 @@ import type {
 } from '@tanstack/react-query';
 
 import type {
+  CoachingContractClientPageResponse,
   CoachingContractCreateRequest,
+  CoachingContractFilterClientsRequest,
   CoachingContractFilterRequest,
   CoachingContractPageResponse,
   CoachingContractResponse,
@@ -163,6 +165,71 @@ export const useFilterCoachingContracts = <TError = ProblemDetails | ProblemDeta
       > => {
 
       const mutationOptions = getFilterCoachingContractsMutationOptions(options);
+
+      return useMutation(mutationOptions, queryClient);
+    }
+    /**
+ * Returns a paginated list of profiles — the current user's own profile (page 0 only) plus all active clients of the current user as coach.
+ * @summary Filter clients
+ */
+export const filterClients = (
+    coachingContractFilterClientsRequest: CoachingContractFilterClientsRequest,
+ signal?: AbortSignal
+) => {
+      
+      
+      return customInstance<CoachingContractClientPageResponse>(
+      {url: `/coaching-contracts/clients`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: coachingContractFilterClientsRequest, signal
+    },
+      );
+    }
+  
+
+
+export const getFilterClientsMutationOptions = <TError = ProblemDetails | ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof filterClients>>, TError,{data: CoachingContractFilterClientsRequest}, TContext>, }
+): UseMutationOptions<Awaited<ReturnType<typeof filterClients>>, TError,{data: CoachingContractFilterClientsRequest}, TContext> => {
+
+const mutationKey = ['filterClients'];
+const {mutation: mutationOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof filterClients>>, {data: CoachingContractFilterClientsRequest}> = (props) => {
+          const {data} = props ?? {};
+
+          return  filterClients(data,)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type FilterClientsMutationResult = NonNullable<Awaited<ReturnType<typeof filterClients>>>
+    export type FilterClientsMutationBody = CoachingContractFilterClientsRequest
+    export type FilterClientsMutationError = ProblemDetails | ProblemDetails
+
+    /**
+ * @summary Filter clients
+ */
+export const useFilterClients = <TError = ProblemDetails | ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof filterClients>>, TError,{data: CoachingContractFilterClientsRequest}, TContext>, }
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof filterClients>>,
+        TError,
+        {data: CoachingContractFilterClientsRequest},
+        TContext
+      > => {
+
+      const mutationOptions = getFilterClientsMutationOptions(options);
 
       return useMutation(mutationOptions, queryClient);
     }

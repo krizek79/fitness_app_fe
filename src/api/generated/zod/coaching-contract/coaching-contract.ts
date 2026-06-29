@@ -33,6 +33,21 @@ export const filterCoachingContractsBody = zod.object({
 })
 
 /**
+ * Returns a paginated list of profiles — the current user's own profile (page 0 only) plus all active clients of the current user as coach.
+ * @summary Filter clients
+ */
+export const filterClientsBodyPageMin = 0;export const filterClientsBodySortDirectionRegExp = new RegExp('ASC|DESC|asc|desc');
+
+
+export const filterClientsBody = zod.object({
+  "page": zod.number().min(filterClientsBodyPageMin),
+  "size": zod.number().min(1),
+  "sortBy": zod.string(),
+  "sortDirection": zod.string().regex(filterClientsBodySortDirectionRegExp),
+  "name": zod.string().optional()
+})
+
+/**
  * Retrieves a specific coaching contracts by its unique ID.
  * @summary Get coaching contract by ID
  */

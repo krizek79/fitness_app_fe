@@ -6,7 +6,7 @@ import {zodResolver} from '@hookform/resolvers/zod';
 import {Ionicons} from '@expo/vector-icons';
 import {useColorScheme} from 'nativewind';
 import {getGetWorkoutByIdQueryKey, useGetWorkoutById, useUpdateWorkout} from '@/src/api/generated/workout/workout';
-import type {WorkoutDetailResponse, WorkoutInputRequest} from '@/src/api/generated/model';
+import type {ProfileSimpleResponse, WorkoutDetailResponse, WorkoutInputRequest} from '@/src/api/generated/model';
 import {useQueryClient} from '@tanstack/react-query';
 import {WorkoutExerciseInputRequestWorkoutExerciseMetric} from '@/src/api/generated/model/workoutExerciseInputRequestWorkoutExerciseMetric';
 import {WorkoutExerciseSetInputRequestWorkoutExerciseSetType} from '@/src/api/generated/model/workoutExerciseSetInputRequestWorkoutExerciseSetType';
@@ -27,6 +27,8 @@ import {TagInputField} from '@/src/components/workouts/TagInputField';
 import {ExercisePickerModal} from '@/src/components/workouts/ExercisePickerModal';
 import {ExerciseBuilderItem} from '@/src/components/workouts/ExerciseBuilderItem';
 import {SortableList} from '@/src/components/primitives/ui/SortableList';
+import {SearchSelect} from '@/src/components/primitives/form/SearchSelect';
+import {TraineePickerModal} from '@/src/components/shared/TraineePickerModal';
 import {themeColors} from '@/src/constants/colors';
 import {cn} from '@/src/lib/utils';
 
@@ -52,6 +54,7 @@ function workoutToFormValues(workout: WorkoutDetailResponse): WorkoutCreateFormV
         weightUnit: (workout.weightUnit?.key as 'KG' | 'LB') ?? 'KG',
         distanceUnit: (workout.distanceUnit?.key as 'KM' | 'MILES') ?? 'KM',
         tags: (workout.tags ?? []).map(t => t.name ?? '').filter(Boolean),
+        traineeId: workout.trainee?.id ?? undefined,
         workoutExercises: (workout.workoutExercises ?? []).map(ex => ({
             _backendId: ex.id,
             _stableId: `${ex.id}-${ex.exercise?.id}-${Date.now()}`,
@@ -80,6 +83,8 @@ export default function WorkoutEditScreen() {
 
     const [step, setStep] = useState<'1' | '2'>('1');
     const [exercisePickerOpen, setExercisePickerOpen] = useState(false);
+    const [traineePickerOpen, setTraineePickerOpen] = useState(false);
+    const [selectedTrainee, setSelectedTrainee] = useState<ProfileSimpleResponse | null>(null);
     const [formReady, setFormReady] = useState(false);
     const [isDragging, setIsDragging] = useState(false);
 
@@ -87,7 +92,7 @@ export default function WorkoutEditScreen() {
     const {data: workout, isLoading} = useGetWorkoutById(workoutId);
     const {mutate: updateWorkout, isPending} = useUpdateWorkout();
 
-    const {control, handleSubmit, reset, getValues, formState: {errors}} = useForm<WorkoutCreateFormValues>({
+    const {control, handleSubmit, reset, setValue, getValues, formState: {errors}} = useForm<WorkoutCreateFormValues>({
         resolver: zodResolver(workoutCreateSchema),
         defaultValues: WORKOUT_CREATE_DEFAULTS,
         mode: 'onBlur',
@@ -103,6 +108,7 @@ export default function WorkoutEditScreen() {
         if (workout && !resetDoneRef.current) {
             resetDoneRef.current = true;
             reset(workoutToFormValues(workout));
+            setSelectedTrainee(workout.trainee ?? null);
             setFormReady(true);
         }
     }, [workout, reset]);
@@ -114,6 +120,7 @@ export default function WorkoutEditScreen() {
             weightUnit: values.weightUnit,
             distanceUnit: values.distanceUnit as WorkoutInputRequestDistanceUnit,
             isTemplate: workout?.isTemplate ?? false,
+            traineeId: workout?.isTemplate ? undefined : (values.traineeId ?? undefined),
             tags: values.tags.map(name => ({name})),
             workoutExercises: values.workoutExercises.map((ex, i) => ({
                 id: ex._backendId,
@@ -193,6 +200,17 @@ export default function WorkoutEditScreen() {
                                 />
                             )}
                         />
+
+                        {!workout?.isTemplate && (
+                            <SearchSelect<ProfileSimpleResponse>
+                                label="Assigned to (optional)"
+                                placeholder="Search trainee..."
+                                value={selectedTrainee ?? undefined}
+                                getLabel={t => t.name ?? ''}
+                                onSelect={() => {}}
+                                onPress={() => setTraineePickerOpen(true)}
+                            />
+                        )}
 
                         <Controller
                             control={control}
@@ -332,6 +350,15 @@ export default function WorkoutEditScreen() {
                         note: undefined,
                         workoutExerciseSets: [],
                     });
+                }}
+            />
+
+            <TraineePickerModal
+                visible={traineePickerOpen}
+                onClose={() => setTraineePickerOpen(false)}
+                onSelect={trainee => {
+                    setSelectedTrainee(trainee);
+                    setValue('traineeId', trainee?.id ?? undefined);
                 }}
             />
         </DetailLayout>

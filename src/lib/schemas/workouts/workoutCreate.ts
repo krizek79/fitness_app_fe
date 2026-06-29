@@ -48,6 +48,7 @@ export const workoutCreateSchema = z.object({
     distanceUnit: z.enum(DISTANCE_UNIT_VALUES),
     tags: z.array(z.string()),
     workoutExercises: z.array(workoutExerciseSchema),
+    traineeId: z.number().int().optional(),
 });
 
 export type WorkoutCreateFormValues = z.infer<typeof workoutCreateSchema>;
@@ -61,6 +62,7 @@ export const WORKOUT_CREATE_DEFAULTS: WorkoutCreateFormValues = {
     distanceUnit: 'KM',
     tags: [],
     workoutExercises: [],
+    traineeId: undefined,
 };
 
 export const DESCRIPTION_MAX = 1000;
